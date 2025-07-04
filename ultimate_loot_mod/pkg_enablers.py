@@ -1,6 +1,7 @@
 from typing import Generator, Dict
 
-from mods_base import BoolOption
+import mods_base
+from mods_base import BoolOption, SpinnerOption
 from unrealsdk import logging, find_object
 from unrealsdk.unreal import UObject, WeakPointer
 from math import trunc
@@ -15,7 +16,6 @@ __all__ = [
 BASE_PATH = "UltimateLoot_Attributes_TEST.Attributes._Enabler"
 
 pkg_enabler_list = [
-    "VHC_Vladof_Expanded_Enabler",
     "Arsenal_Enabler",
     "BetterHealth_Enabler",
     "EWO_Enabler",
@@ -41,6 +41,7 @@ pkg_enabler_list = [
     "VHC_Torgue_Enabler",
     "VHC_Torgue_Expanded_Enabler",
     "VHC_Vladof_Enabler",
+    "VHC_Vladof_Expanded_Enabler",
 ]
 
 pkg_enabler_objects: Dict[str, WeakPointer] = {
@@ -80,6 +81,11 @@ def find_pkg_enabler(name: str) -> UObject | None:
     except ValueError:
         logging.info(f"Failed to find object '{full_path}'")
         return None
+
+
+def create_grouped_option():
+    # SpinnerOption(["No Maliwan", "Maliwan", "Maliwan Expanded", "Maliwan & Expanded"])
+    pass
 
 
 def create_options() -> Generator[BoolOption, None, None]:
