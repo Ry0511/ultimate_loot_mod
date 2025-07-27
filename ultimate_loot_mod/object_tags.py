@@ -102,6 +102,13 @@ class ObjectTag(Enum):
     Shared_Chance_Pearlescent_A = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Pearlescent')
     Shared_Chance_Lootable_A    = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Lootable')
 
+    CrimsonChestMulti_Leg   = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_CrimsonChest_Legendary')
+    CrimsonChestMulti_Pearl = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_CrimsonChest_Pearlescent')
+    RedChestMulti_Leg       = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_RedChest_Legendary')
+    RedChestMulti_Pearl     = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_RedChest_Pearlescent')
+    WhiteChestMulti_Leg     = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_WhiteChest_Legendary')
+    WhiteChestMulti_Pearl   = LazyObject(_class=ATTR_CLASS, _path='UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_WhiteChest_Pearlescent')
+
 
 # @formatter:on
 
@@ -372,6 +379,13 @@ OPTION_MAPPING: Dict[ObjectTag, BaseOption] = {
         max_value=100,
         step=1
     ),
+
+    ObjectTag.CrimsonChestMulti_Leg:   RaritySlider("Crimson Chest Legendary Multiplier", ObjectTag.CrimsonChestMulti_Leg, value=150, min_value=0, max_value=500, step=5),
+    ObjectTag.CrimsonChestMulti_Pearl: RaritySlider("Crimson Chest Pearl Multiplier", ObjectTag.CrimsonChestMulti_Pearl, value=100, min_value=0, max_value=500, step=5),
+    ObjectTag.RedChestMulti_Leg:       RaritySlider("Red Chest Legendary Multiplier", ObjectTag.RedChestMulti_Leg, value=100, min_value=0, max_value=500, step=5),
+    ObjectTag.RedChestMulti_Pearl:     RaritySlider("Red Chest Pearl Multiplier", ObjectTag.RedChestMulti_Pearl, value=25, min_value=0, max_value=500, step=5),
+    ObjectTag.WhiteChestMulti_Leg:     RaritySlider("White Chest Legendary Multiplier", ObjectTag.WhiteChestMulti_Leg, value=25, min_value=0, max_value=500, step=5),
+    ObjectTag.WhiteChestMulti_Pearl:   RaritySlider("White Chest Pearl Multiplier", ObjectTag.WhiteChestMulti_Pearl, value=5, min_value=0, max_value=500, step=5),
 }
 
 # @formatter:on

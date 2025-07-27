@@ -38,6 +38,14 @@ def create_option_list() -> List[BaseOption]:
                 get(ObjectTag.Shared_Chance_Legendary_A),
                 get(ObjectTag.Shared_Chance_Pearlescent_A),
                 get(ObjectTag.Shared_Chance_Lootable_A),
+                GroupedOption("Chest Drop Rates", children=[
+                    get(ObjectTag.CrimsonChestMulti_Leg),
+                    get(ObjectTag.CrimsonChestMulti_Pearl),
+                    get(ObjectTag.RedChestMulti_Leg),
+                    get(ObjectTag.RedChestMulti_Pearl),
+                    get(ObjectTag.WhiteChestMulti_Leg),
+                    get(ObjectTag.WhiteChestMulti_Pearl),
+                ])
             ])
         ]),
         NestedOption("Vault Hunter Challenges", children=[
