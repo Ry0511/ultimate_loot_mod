@@ -5,8 +5,8 @@ from unrealsdk import logging
 from mods_base import build_mod, Mod
 from mods_base.settings import SETTINGS_DIR
 
-from .ulm_config import ULM_CONFIG
-from .ulm_object_list import ObjectTag
+from proxy.ulm_config import ULM_CONFIG
+from proxy.ulm_object_list import ObjectTag
 
 __version__: Tuple[int, int]
 
@@ -23,5 +23,5 @@ def on_enable() -> None:
 
 
 the_mod: Mod = build_mod(
-    on_enable=on_enable
+    on_enable=on_enable,
 )

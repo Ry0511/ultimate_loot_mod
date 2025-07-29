@@ -1,9 +1,7 @@
 from typing import List
 from enum import Enum, auto
 
-from unrealsdk import logging
 from unrealsdk.unreal import UObject
-from unrealsdk import find_object
 
 type AttributeDefinition = UObject
 type AttributeDataType = int | float | bool
@@ -15,7 +13,6 @@ ADT_Bool: EAttributeDataType = 2
 
 __all__: List[str] = [
     "ObjectTag",
-    "TagObject",
     "AttributeDefinition",
     "AttributeDataType",
     "EAttributeDataType",
@@ -27,6 +24,9 @@ __all__: List[str] = [
     "TAG_STATIC_DEFAULTS",
 ]
 
+#
+# If it isn't obvious most of this is the result of copy+paste and regex
+#
 
 class ObjectTag(Enum):
 
@@ -155,83 +155,3 @@ TAG_STATIC_DEFAULTS: List[int | float | bool] = [
 ]
 
 TAG_OBJ_LIST: List[AttributeDefinition | None] = [None] * len(ObjectTag)
-
-
-# More of a ProxyObject
-class TagObject:
-    tag: ObjectTag
-
-    def __init__(self, tag: ObjectTag) -> None:
-        self.tag = tag
-
-    def index(self) -> int:
-        return self.tag.value
-
-    def get_path(self):
-        return TAG_PATH_LIST[self.index()]
-
-    def get_obj(self) -> AttributeDefinition | None:
-        return TAG_OBJ_LIST[self.index()]
-
-    def load_obj(self) -> bool:
-        obj = TAG_OBJ_LIST[self.index()]
-
-        if obj is not None:
-            return True
-
-        try:
-            TAG_OBJ_LIST[self.index()] = find_object("AttributeDefinition", self.get_path())
-            TAG_OBJ_LIST[self.index()].ObjectFlags |= 0x4000
-        except Exception:  # noqa
-            pass
-
-        return TAG_OBJ_LIST[self.index()] is not None
-
-    def set_value(self, val: float | int | bool) -> bool:
-        if not self.load_obj():
-            return False
-
-        try:
-            obj = self.get_obj()
-            size = len(obj.ValueResolverChain)
-            if size == 0:
-                logging.error(f"ValueResolverChain of {self.get_path()} is empty")
-                return False
-            else:
-                obj.ValueResolverChain[size - 1].ConstantValue = val
-        except Exception as ex:
-            logging.dev_warning(f"Failed to set value for {self.get_path()}: {ex}")
-            return False
-
-        return True
-
-    def get_value(self, allow_default=False) -> float | int | bool | None:
-        if not self.load_obj():
-            return TAG_STATIC_DEFAULTS[self.index()] if allow_default else None
-
-        try:
-            obj = self.get_obj()
-            ty: EAttributeDataType = obj.AttributeDataType
-            size = len(obj.ValueResolverChain)
-
-            if size == 0:
-                logging.error(f"ValueResolverChain of {self.get_path()} is empty")
-                return TAG_STATIC_DEFAULTS[self.index()] if allow_default else None
-
-            val = obj.ValueResolverChain[size - 1].ConstantValue
-
-            if ty == ADT_Float:
-                return round(float(val), 6)
-            elif ty == ADT_Int:
-                return int(val)
-            elif ty == ADT_Bool:
-                return int(val) != 0
-            else:
-                return val
-
-        except Exception as ex:
-            logging.dev_warning(f"Failed to get value for {self.get_path()}: {ex}")
-            return TAG_STATIC_DEFAULTS[self.index()] if allow_default else None
-
-    def get_static_default(self) -> float | int | bool:
-        return TAG_STATIC_DEFAULTS[self.index()]

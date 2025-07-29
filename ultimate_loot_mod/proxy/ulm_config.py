@@ -3,21 +3,22 @@ from dataclasses import dataclass, field
 
 from unrealsdk import logging
 from unrealsdk import load_package
-from .ulm_object_list import ObjectTag, TagObject
+
+from proxy.ulm_object_list import ObjectTag, TagObject, AttributeDataType
+
+type ConfigValue = AttributeDataType | None
 
 __all__: List[str] = [
     "UltimateLootModConfig",
-    "TagObject",
+    "ObjectTag",
     "ULM_CONFIG",
 ]
-
-type ConfigValue = int | float | bool | None
 
 
 @dataclass
 class UltimateLootModConfig:
-    cfg: List[ConfigValue] = field(default_factory=list)
-    _defaults: List[ConfigValue] = field(default_factory=list)
+    cfg: List[AttributeDataType | None] = field(default_factory=list)
+    _defaults: List[AttributeDataType | None] = field(default_factory=list)
     _loaded: bool = False
 
     def _manual_load(self):
@@ -32,7 +33,7 @@ class UltimateLootModConfig:
             self.cfg[i.value] = proxy.get_value()
             self._defaults[i.value] = proxy.get_value(allow_default=True)
 
-    def set(self, tag: ObjectTag, value: ConfigValue):
+    def set(self, tag: ObjectTag, value: AttributeDataType):
         self.cfg[tag.value] = value
 
     def get(self, tag: ObjectTag) -> ConfigValue:
