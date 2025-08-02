@@ -104,4 +104,5 @@ class TagProxy:
             return
 
         if (obj := self.object()) and obj.AttributeDataType == ADT_Int:
+            logging.dev_warning(f"Forcing ADT_Int to ADT_Float for {self.path()}")
             obj.AttributeDataType = ADT_Float
