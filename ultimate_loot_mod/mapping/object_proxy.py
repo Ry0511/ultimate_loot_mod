@@ -89,6 +89,9 @@ class TagProxy:
             try:
                 LOADED_OBJECT_MAPPING[self.tag] = find_object(self.class_type(), self.path())
                 LOADED_OBJECT_MAPPING[self.tag].ObjectFlags |= ObjectFlags.KEEP_ALIVE
+                # Seems a few of the attributes use ADT_Int when they want fractional numbers.
+                # Since it is stored as a float anyway we might as well just enforce it globally
+                # for all ADT_Int attributes
                 self.force_int_to_float()
                 return True
             except ValueError:
@@ -96,13 +99,9 @@ class TagProxy:
                 return False
         return LOADED_OBJECT_MAPPING[self.tag] is not None
 
-    def force_int_to_float(self) -> bool:
+    def force_int_to_float(self) -> None:
         if not self.try_load_object():
-            return False
+            return
 
-        obj = self.object()
-
-        if obj.AttributeDataType == ADT_Int:
+        if (obj := self.object()) and obj.AttributeDataType == ADT_Int:
             obj.AttributeDataType = ADT_Float
-
-        return obj.AttributeDataType == ADT_Float
