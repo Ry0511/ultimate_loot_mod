@@ -6,6 +6,7 @@ from mods_base import build_mod, Mod
 from mods_base.settings import SETTINGS_DIR
 
 from .mapping.object_proxy import Tag, load_all_objects
+from .options.option_list import create_option_list
 
 __version__: Tuple[int, int]
 
@@ -21,6 +22,7 @@ def _on_enable() -> None:
 
 
 the_mod: Mod = build_mod(
-    on_enable=_on_enable
+    on_enable=_on_enable,
+    options=create_option_list()
 )
 logging.info(f"Successfully loaded {the_mod.name} v{the_mod.version}")

@@ -5,10 +5,13 @@ from .attribute_types import AttributeDataType
 from .internal_object_list import Tag
 
 __all__ = [
+    "Tag",
     "OBJECT_PATH_MAPPING",
     "VHC_CONFIG_LIST",
     "DEFAULT_VALUE_MAPPING",
     "LOADED_OBJECT_MAPPING",
+    "BASE_DROP_CHANCES",
+    "CHEST_MULTIPLIERS",
 ]
 
 ################################################################################
@@ -62,18 +65,38 @@ OBJECT_PATH_MAPPING: Dict[Tag, str] = {
 # | VHC OBJECT LIST |
 ################################################################################
 
-VHC_CONFIG_LIST: List[Tuple[Tag, Tag | None]] = [
-    (Tag.VHC_Gearbox_Enabler, None),
-    (Tag.VHC_Randomizer_Enabler, None),
-    (Tag.VHC_Atlas_Enabler, Tag.VHC_Atlas_Expanded_Enabler),
-    (Tag.VHC_Dahl_Enabler, Tag.VHC_Dahl_Expanded_Enabler),
-    (Tag.VHC_Hyperion_Enabler, Tag.VHC_Hyperion_Expanded_Enabler),
-    (Tag.VHC_Jakobs_Enabler, Tag.VHC_Jakobs_Expanded_Enabler),
-    (Tag.VHC_Maliwan_Enabler, Tag.VHC_Maliwan_Expanded_Enabler),
-    (Tag.VHC_SandS_Enabler, Tag.VHC_SandS_Expanded_Enabler),
-    (Tag.VHC_Tediore_Enabler, Tag.VHC_Tediore_Expanded_Enabler),
-    (Tag.VHC_Torgue_Enabler, Tag.VHC_Torgue_Expanded_Enabler),
-    (Tag.VHC_Vladof_Enabler, Tag.VHC_Vladof_Expanded_Enabler),
+VHC_CONFIG_LIST: List[Tuple[str, Tag, Tag | None]] = [
+    ("Gearbox", Tag.VHC_Gearbox_Enabler, None),
+    ("Atlas", Tag.VHC_Atlas_Enabler, Tag.VHC_Atlas_Expanded_Enabler),
+    ("SandS", Tag.VHC_SandS_Enabler, Tag.VHC_SandS_Expanded_Enabler),
+    ("Maliwan", Tag.VHC_Maliwan_Enabler, Tag.VHC_Maliwan_Expanded_Enabler),
+    ("Jakobs", Tag.VHC_Jakobs_Enabler, Tag.VHC_Jakobs_Expanded_Enabler),
+    ("Torgue", Tag.VHC_Torgue_Enabler, Tag.VHC_Torgue_Expanded_Enabler),
+    ("Hyperion", Tag.VHC_Hyperion_Enabler, Tag.VHC_Hyperion_Expanded_Enabler),
+    ("Vladof", Tag.VHC_Vladof_Enabler, Tag.VHC_Vladof_Expanded_Enabler),
+    ("Dahl", Tag.VHC_Dahl_Enabler, Tag.VHC_Dahl_Expanded_Enabler),
+    ("Tediore", Tag.VHC_Tediore_Enabler, Tag.VHC_Tediore_Expanded_Enabler),
+]
+
+################################################################################
+# | DROP RATE OPTIONS |
+################################################################################
+
+BASE_DROP_CHANCES: List[Tag] = [
+    Tag.DropChance_EWO,
+    Tag.DropChance_Common,
+    Tag.DropChance_Legendary,
+    Tag.DropChance_Lootable,
+    Tag.DropChance_Pearlescent,
+]
+
+CHEST_MULTIPLIERS: List[Tag] = [
+    Tag.Multiplier_CrimsonChest_Legendary,
+    Tag.Multiplier_CrimsonChest_Pearlescent,
+    Tag.Multiplier_RedChest_Legendary,
+    Tag.Multiplier_RedChest_Pearlescent,
+    Tag.Multiplier_WhiteChest_Legendary,
+    Tag.Multiplier_WhiteChest_Pearlescent,
 ]
 
 ################################################################################

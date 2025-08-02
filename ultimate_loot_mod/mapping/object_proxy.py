@@ -48,9 +48,6 @@ def load_all_objects() -> int:
 class TagProxy:
     tag: Tag
 
-    def __post_init__(self):
-        self.tag = Tag(self.tag)
-
     @staticmethod
     def class_type() -> str:
         return 'AttributeDefinition'
@@ -62,17 +59,18 @@ class TagProxy:
         return DEFAULT_VALUE_MAPPING[self.tag]
 
     def object(self) -> UObject | None:
+        self.try_load_object()
         return LOADED_OBJECT_MAPPING[self.tag]
 
-    def value(self) -> AttributeDataType | None:
+    def value(self, allow_default=False) -> AttributeDataType | None:
         if not self.try_load_object():
-            return None
+            return self.default_value() if allow_default else None
 
         try:
             return get_constant_value(self.object())
         except Exception as ex:
             logging.error(f"Failed to get value for {self.path()}: {ex}")
-            return None
+            return self.default_value() if allow_default else None
 
     def set_value(self, value: AttributeDataType) -> bool:
         if not self.try_load_object():
@@ -96,7 +94,6 @@ class TagProxy:
                 return True
             except ValueError:
                 logging.warning(f"Failed to load object {self.path()}")
-                return False
         return LOADED_OBJECT_MAPPING[self.tag] is not None
 
     def force_int_to_float(self) -> None:
