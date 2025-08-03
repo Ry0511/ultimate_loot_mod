@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import wraps
 
 from unrealsdk import load_package, find_object, logging
 from unrealsdk.unreal import UObject
@@ -16,7 +17,13 @@ __all__ = [
     "get_constant_value",
     "set_constant_value",
     "load_all_objects",
+    "try_reload_current_screen",
 ]
+
+
+################################################################################
+# | HELPER FUNCTIONS |
+################################################################################
 
 
 def get_constant_value(obj: UObject) -> AttributeDataType:
@@ -31,6 +38,7 @@ def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
     chain[len(chain) - 1].ConstantValue = to_py_type(ty, value)
     return True
 
+
 def load_all_objects() -> int:
     fail_count = 0
     load_package("UltimateLoot_Attributes_TEST")
@@ -44,9 +52,43 @@ def load_all_objects() -> int:
     return fail_count
 
 
+import willow1_mod_menu.options
+from willow1_mod_menu.util import WillowGFxMenu
+from willow1_mod_menu.options import draw_custom_menu as original_draw_custom_menu
+
+_LAST_DRAWN_MENU: WillowGFxMenu | None = None
+
+
+@wraps(original_draw_custom_menu)
+def _store_last_menu(menu: WillowGFxMenu) -> None:
+    global _LAST_DRAWN_MENU
+    _LAST_DRAWN_MENU = menu
+    original_draw_custom_menu(menu)
+
+
+willow1_mod_menu.options.draw_custom_menu = _store_last_menu
+
+
+def try_reload_current_screen() -> None:
+    from willow1_mod_menu.options import draw_custom_menu
+    if _LAST_DRAWN_MENU is not None:
+        draw_custom_menu(_LAST_DRAWN_MENU)
+    else:
+        logging.dev_warning("Last drawn menu is None")
+
+
+################################################################################
+# | PROXY |
+################################################################################
+
 @dataclass
 class TagProxy:
     tag: Tag
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, TagProxy):
+            return self.tag == other.tag
+        return False
 
     @staticmethod
     def class_type() -> str:
@@ -80,6 +122,8 @@ class TagProxy:
             return set_constant_value(self.object(), value)
         except Exception as ex:
             logging.error(f"Failed to set value for {self.path()}: {ex}")
+            from traceback import format_exc
+            logging.error(format_exc(4))
             return False
 
     def try_load_object(self) -> bool:

@@ -5,7 +5,7 @@ from ui_utils import OptionBox, OptionBoxButton
 
 from unrealsdk import logging
 
-from ..mapping.object_proxy import Tag, TagProxy
+from ..mapping.object_proxy import Tag, TagProxy, try_reload_current_screen
 from ..mapping.internal_object_mappings import VHC_CONFIG_LIST, BASE_DROP_CHANCES, CHEST_MULTIPLIERS
 from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
 
@@ -23,6 +23,7 @@ def confirmation_box(message: str, on_yes: Callable[[], None]) -> None:
         nonlocal on_yes
         if btn.name == "Yes":
             on_yes()
+            try_reload_current_screen()
         else:
             logging.info("Not resetting anything!")
 
@@ -37,23 +38,6 @@ def confirmation_box(message: str, on_yes: Callable[[], None]) -> None:
     confirm.show()
 
 
-@VHCSpinner("VHC", Tag.VHC_Enabler, Tag.VHC_Expanded_Enabler, on_change=None)
-def _vhc_enabler_spinner(self: VHCSpinner, val: str) -> None:
-    # TODO: Very likely we will need to disable all VHC config options as well depending on the values
-
-    if val == "Off":
-        self._normal_tag.set_value(False)
-        self._expanded_tag.set_value(False)
-
-    elif val == "Normal":
-        self._normal_tag.set_value(True)
-        self._expanded_tag.set_value(False)
-
-    elif val == "Expanded":
-        self._normal_tag.set_value(True)
-        self._expanded_tag.set_value(True)
-
-
 # noinspection PyArgumentList
 @ButtonOption("Reset Everything (Literally)")
 def _button_reset_all(_: ButtonOption) -> None:
@@ -62,17 +46,34 @@ def _button_reset_all(_: ButtonOption) -> None:
             proxy = TagProxy(tag)
             proxy.set_value(proxy.default_value())
 
-    confirmation_box(message="Are you sure you want to reset everything back to their default values?", on_yes=_on_yes)
+    confirmation_box(
+        message="Are you sure you want to reset everything back to their default values?",
+        on_yes=_on_yes
+    )
+
 
 # noinspection PyArgumentList
-@ButtonOption("Reset Drop Chances")
-def _button_reset_drop_chances(_: ButtonOption) -> None:
+@ButtonOption("Reset All")
+def _button_reset_vhc_config(_: ButtonOption) -> None:
     def _on_yes() -> None:
-        for tag in BASE_DROP_CHANCES:
-            proxy = TagProxy(tag)
-            proxy.set_value(proxy.default_value())
+        has_normal = False
+        has_expanded = False
+        for _, normal, expanded in VHC_CONFIG_LIST:
+            proxy = TagProxy(normal)
+            val: bool = bool(proxy.default_value())
+            has_normal = has_normal or val
+            proxy.set_value(val)
 
-    confirmation_box(message="Are you sure you want to reset all drop chances to their default values?", on_yes=_on_yes)
+            if expanded is not None:
+                proxy = TagProxy(expanded)
+                val: bool = bool(proxy.default_value())
+                proxy.set_value(val)
+                has_expanded = has_expanded or val
+
+    confirmation_box(
+        message="Are you sure you want to reset all Vault Hunter Challenges options to their default values?",
+        on_yes=_on_yes
+    )
 
 
 # noinspection PyArgumentList
@@ -84,6 +85,17 @@ def _button_reset_drop_rates(_: ButtonOption) -> None:
             proxy.set_value(proxy.default_value())
 
     confirmation_box(message="Are you sure you want to reset all drop rates to their default values?", on_yes=_on_yes)
+
+
+# noinspection PyArgumentList
+@ButtonOption("Reset Drop Chances")
+def _button_reset_drop_chances(_: ButtonOption) -> None:
+    def _on_yes() -> None:
+        for tag in BASE_DROP_CHANCES:
+            proxy = TagProxy(tag)
+            proxy.set_value(proxy.default_value())
+
+    confirmation_box(message="Are you sure you want to reset all drop chances to their default values?", on_yes=_on_yes)
 
 
 # noinspection PyArgumentList
@@ -111,7 +123,7 @@ def create_option_list() -> List[BaseOption]:
                 TagToggleOption("Arsenal", Tag.Arsenal_Enabler),
                 TagToggleOption("EWO", Tag.EWO_Enabler),
                 NestedOption("> Vault Hunter Challenges", children=[
-                    _vhc_enabler_spinner,
+                    _button_reset_vhc_config,
                     TagToggleOption("Randomizer", Tag.VHC_Randomizer_Enabler),
                     GroupedOption("Manufacturers", children=[
                         *[

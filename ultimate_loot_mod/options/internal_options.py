@@ -1,4 +1,3 @@
-from typing import List
 from mods_base.options import BoolOption, SpinnerOption, SliderOption
 
 from ..mapping.object_proxy import Tag, TagProxy

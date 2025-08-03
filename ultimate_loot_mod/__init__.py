@@ -21,6 +21,8 @@ def _on_enable() -> None:
     logging.info(f"Loaded {total - fail_count}/{total} ultimate loot mod objects")
 
 
+_on_enable()
+
 the_mod: Mod = build_mod(
     on_enable=_on_enable,
     options=create_option_list()
