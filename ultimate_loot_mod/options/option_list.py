@@ -3,12 +3,10 @@ from typing import List, Callable
 from mods_base.options import BaseOption, ButtonOption, NestedOption, GroupedOption
 from ui_utils import OptionBox, OptionBoxButton
 
-from unrealsdk import logging
-
 from ..mapping.object_proxy import Tag, TagProxy
 from ..mapping.internal_object_mappings import VHC_CONFIG_LIST, BASE_DROP_CHANCES, CHEST_MULTIPLIERS
 from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
-from ..ui_helpers import update_drawn_items
+from ..ui_helpers import update_drawn_items, update_option
 
 __all__ = [
     "create_option_list"
@@ -136,6 +134,35 @@ def _button_reset_chest_rarities(self: ButtonOption) -> None:
     confirmation_box(message="Are you sure you want to reset all chest multipliers to their default values?", on_yes=_on_yes)
 
 
+@VHCSpinner("Vault Hunter Challenges", normal=Tag.VHC_Enabler, expanded=Tag.VHC_Expanded_Enabler, on_change=None)
+def _vhc_enabler_spinner(self: VHCSpinner, value: str) -> None:
+    if value == "Off":
+        self.set_normal(False)
+        self.set_expanded(False)
+
+        # Disable all
+        for _, normal, expanded in VHC_CONFIG_LIST:
+            TagProxy(normal).set_value(False)
+            if expanded is not None:
+                TagProxy(expanded).set_value(False)
+
+    elif value == "Normal":
+        self.set_normal(True)
+        self.set_expanded(False)
+
+        # Disable
+        for _, _, expanded in VHC_CONFIG_LIST:
+            if expanded is not None:
+                TagProxy(expanded).set_value(False)
+
+    elif value == "Expanded":
+        self.set_normal(True)
+        self.set_expanded(True)
+
+    _cascade_option_values(self)
+    update_drawn_items()
+
+
 ################################################################################
 # | OPTION LIST |
 ################################################################################
@@ -151,6 +178,7 @@ def create_option_list() -> List[BaseOption]:
                 TagToggleOption("EWO", Tag.EWO_Enabler),
                 NestedOption("> Vault Hunter Challenges", children=[
                     _button_reset_vhc_config,
+                    _vhc_enabler_spinner,
                     TagToggleOption("Randomizer", Tag.VHC_Randomizer_Enabler),
                     GroupedOption("Manufacturers", children=[
                         *[

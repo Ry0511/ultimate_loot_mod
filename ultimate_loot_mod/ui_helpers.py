@@ -131,9 +131,13 @@ def update_spinner_option(index: int, option: SpinnerOption | BoolOption) -> Non
     lobby_tools().SetVariableString(f'{pth}.mValue.text', option_text)
 
 
-def update_option(opt: BaseOption) -> None:
+def update_option(opt: BaseOption, check_drawn_options=False) -> None:
     if not hasattr(opt, "menu_index"):
         set_all_menu_tags(opt.mod)
+
+    if check_drawn_options:
+        if opt not in _last_populator.drawn_options:
+            return
 
     if isinstance(opt, SliderOption):
         update_slider_option(getattr(opt, "menu_index"), opt)
