@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from functools import wraps
 
 from unrealsdk import load_package, find_object, logging
 from unrealsdk.unreal import UObject
@@ -17,7 +16,6 @@ __all__ = [
     "get_constant_value",
     "set_constant_value",
     "load_all_objects",
-    "try_reload_current_screen",
 ]
 
 
@@ -50,31 +48,6 @@ def load_all_objects() -> int:
         if not proxy.try_load_object():
             fail_count += 1
     return fail_count
-
-
-import willow1_mod_menu.options
-from willow1_mod_menu.util import WillowGFxMenu
-from willow1_mod_menu.options import draw_custom_menu as original_draw_custom_menu
-
-_LAST_DRAWN_MENU: WillowGFxMenu | None = None
-
-
-@wraps(original_draw_custom_menu)
-def _store_last_menu(menu: WillowGFxMenu) -> None:
-    global _LAST_DRAWN_MENU
-    _LAST_DRAWN_MENU = menu
-    original_draw_custom_menu(menu)
-
-
-willow1_mod_menu.options.draw_custom_menu = _store_last_menu
-
-
-def try_reload_current_screen() -> None:
-    from willow1_mod_menu.options import draw_custom_menu
-    if _LAST_DRAWN_MENU is not None:
-        draw_custom_menu(_LAST_DRAWN_MENU)
-    else:
-        logging.dev_warning("Last drawn menu is None")
 
 
 ################################################################################

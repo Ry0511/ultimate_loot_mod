@@ -8,6 +8,8 @@ from mods_base.settings import SETTINGS_DIR
 from .mapping.object_proxy import Tag, load_all_objects
 from .options.option_list import create_option_list
 
+from .ui_helpers import set_all_menu_tags
+
 __version__: Tuple[int, int]
 
 # Delete original config file if it exists
@@ -21,10 +23,12 @@ def _on_enable() -> None:
     logging.info(f"Loaded {total - fail_count}/{total} ultimate loot mod objects")
 
 
-_on_enable()
-
 the_mod: Mod = build_mod(
     on_enable=_on_enable,
     options=create_option_list()
 )
+
+# 0 is Description, 1 is Enabled On/Off, 2 is first option
+set_all_menu_tags(start_index=2, mod=the_mod)
+
 logging.info(f"Successfully loaded {the_mod.name} v{the_mod.version}")

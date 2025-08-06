@@ -36,6 +36,11 @@ class TagToggleOption(BoolOption):
     def _on_change(self: "TagToggleOption", val: bool) -> None:
         self._tag.set_value(val)
 
+    def fetch_proxy_value(self) -> None:
+        setattr(self, "_on_change_recursion_guard", None)
+        self.value = bool(self._tag.value(allow_default=True))
+        delattr(self, "_on_change_recursion_guard")
+
 
 ################################################################################
 # | VHC SPINNER |
@@ -97,6 +102,11 @@ class VHCSpinner(SpinnerOption):
         else:
             return "Off"
 
+    def fetch_proxy_value(self) -> None:
+        setattr(self, "_on_change_recursion_guard", None)
+        self.value = self.get_str_value_from_proxy()
+        delattr(self, "_on_change_recursion_guard")
+
 
 ################################################################################
 # | RARITY SLIDER |
@@ -106,10 +116,12 @@ class VHCSpinner(SpinnerOption):
 class RaritySlider(SliderOption):
     tag: TagProxy
     is_scalar: bool
+    value_suffix: str = ""
 
-    def __init__(self, identifier: str, tag: Tag, is_scalar=False, **kwargs):
+    def __init__(self, identifier: str, tag: Tag, is_scalar=False, value_suffix="", **kwargs):
         self.tag = TagProxy(tag)
         self.is_scalar = is_scalar
+        self.value_suffix = value_suffix
 
         if "min_value" not in kwargs:
             kwargs["min_value"] = 0.0
@@ -126,7 +138,7 @@ class RaritySlider(SliderOption):
         if "value" not in kwargs:
             val = float(self.tag.value(allow_default=True))
 
-            # Convert into 0.0 -> P
+            # Default values is 150% not 1.5x
             if is_scalar:
                 val /= 100.0
 
@@ -143,3 +155,17 @@ class RaritySlider(SliderOption):
             self.tag.set_value(val * 100.0)
         else:
             self.tag.set_value(val)
+
+    def fetch_proxy_value(self) -> None:
+        setattr(self, "_on_change_recursion_guard", None)
+        if val := self.tag.value():
+            self.value = val if not self.is_scalar else val / 100.0
+        delattr(self, "_on_change_recursion_guard")
+
+    def create_format_label(self) -> str:
+        if self.is_integer:
+            value_text = f"{self.value:d}{self.value_suffix}"
+        else:
+            value_text = f"{self.value:.2f}{self.value_suffix}"
+
+        return f'{self.identifier}: {value_text}'
