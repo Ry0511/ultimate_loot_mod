@@ -33,9 +33,6 @@ __all__ = [
 # | GLOBALS |
 ################################################################################
 
-# TODO: I doubt this is the path for the ingame pause menu option list
-BASE_ITEM_PATH = "_level0.menu.selections.mMenu.mList"
-
 _draw_custom_menu = wmm.options.draw_custom_menu
 _fmt_slider_label = wmm.populators.Populator.format_slider_label
 
@@ -84,7 +81,19 @@ wmm.populators.Populator.format_slider_label = staticmethod(format_slider_label)
 ################################################################################
 
 def item_path(index: int) -> str:
-    return f"{BASE_ITEM_PATH}.item{index}"
+    if _last_drawn_menu is None:
+        raise RuntimeError("Last drawn menu is None")
+
+    full_path = wmm.util.find_focused_item(_last_drawn_menu)
+    pos = full_path.rfind(".item")
+
+    # Should not happen, but if it does we would like to know
+    if pos == -1:
+        raise RuntimeError(f"Failed to get base path from '{full_path}'")
+
+    base_path = full_path[:pos]
+
+    return f'{base_path}.item{index}'
 
 
 def lobby_tools() -> UObject:
@@ -152,7 +161,7 @@ def set_all_menu_tags(start_index: int, mod: Mod) -> None:
     if getattr(mod, "_menu_tags_set", False):
         return
 
-    # TODO: Hidden options complicate this indexing but we don't use them so /shrug
+    # TODO: Hidden options complicate this indexing but we don't use them currently so that is fine
     def recurse_set_tags(base_index: int, items: Iterable[BaseOption]) -> None:
 
         for i, opt in enumerate(items):
