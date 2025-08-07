@@ -159,8 +159,8 @@ def _vhc_enabler_spinner(self: VHCSpinner) -> None:
                     TagProxy(expanded_tag).set_value(expanded)
 
         def vhc_set_values(normal: bool, expanded: bool) -> None:
-            TagProxy(Tag.VHC_Enabler).set_value(normal)
-            TagProxy(Tag.VHC_Expanded_Enabler).set_value(expanded)
+            #TagProxy(Tag.VHC_Enabler).set_value(normal)
+            #TagProxy(Tag.VHC_Expanded_Enabler).set_value(expanded)
             _cascade_option_values(self)
             update_drawn_items()
 
