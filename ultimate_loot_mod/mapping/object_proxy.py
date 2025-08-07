@@ -24,10 +24,14 @@ __all__ = [
 ################################################################################
 
 
-def get_constant_value(obj: UObject) -> AttributeDataType:
+def get_constant_value(obj: UObject, convert_to_py_type=True) -> AttributeDataType:
     ty = obj.AttributeDataType
     chain = obj.ValueResolverChain
-    return to_py_type(ty, chain[len(chain) - 1].ConstantValue)
+
+    if convert_to_py_type:
+        return to_py_type(ty, chain[len(chain) - 1].ConstantValue)
+    else:
+        return chain[len(chain) - 1].ConstantValue
 
 
 def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
@@ -77,12 +81,12 @@ class TagProxy:
         self.try_load_object()
         return LOADED_OBJECT_MAPPING[self.tag]
 
-    def value(self, allow_default=False) -> AttributeDataType | None:
+    def value(self, allow_default=False, convert_to_py_type=True) -> AttributeDataType | None:
         if not self.try_load_object():
             return self.default_value() if allow_default else None
 
         try:
-            return get_constant_value(self.object())
+            return get_constant_value(obj=self.object(), convert_to_py_type=convert_to_py_type)
         except Exception as ex:
             logging.error(f"Failed to get value for {self.path()}: {ex}")
             return self.default_value() if allow_default else None
