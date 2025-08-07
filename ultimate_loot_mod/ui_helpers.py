@@ -91,9 +91,7 @@ def item_path(index: int) -> str:
     if pos == -1:
         raise RuntimeError(f"Failed to get base path from '{full_path}'")
 
-    base_path = full_path[:pos]
-
-    return f'{base_path}.item{index}'
+    return f'{full_path[:pos]}.item{index}'
 
 
 def lobby_tools() -> UObject:
@@ -148,10 +146,13 @@ def update_option(opt: BaseOption, check_drawn_options=False) -> None:
         if opt not in _last_populator.drawn_options:
             return
 
+    # There are more types than this but we only care about these ones
     if isinstance(opt, SliderOption):
         update_slider_option(getattr(opt, "menu_index"), opt)
+
     elif isinstance(opt, SpinnerOption | BoolOption):
         update_spinner_option(getattr(opt, "menu_index"), opt)
+
     elif isinstance(opt, GroupedOption):
         for child in opt.children:
             update_option(child)
