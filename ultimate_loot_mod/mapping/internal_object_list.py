@@ -55,7 +55,6 @@ class Tag(Enum):
 
     DropChance_EWO = auto()
 
-    DropChance_Common = auto()
     DropChance_Lootable = auto()
     DropChance_Legendary = auto()
     DropChance_Pearlescent = auto()

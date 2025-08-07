@@ -48,7 +48,6 @@ OBJECT_PATH_MAPPING: Dict[Tag, str] = {
 
     Tag.DropChance_EWO: 'UltimateLoot_Attributes_TEST.Attributes.EWO.DropChance.DropChance_EWO',
 
-    Tag.DropChance_Common: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Common',
     Tag.DropChance_Legendary: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Legendary',
     Tag.DropChance_Lootable: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Lootable',
     Tag.DropChance_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Pearlescent',
@@ -84,7 +83,6 @@ VHC_CONFIG_LIST: List[Tuple[str, Tag, Tag | None]] = [
 
 BASE_DROP_CHANCES: List[Tag] = [
     Tag.DropChance_EWO,
-    Tag.DropChance_Common,
     Tag.DropChance_Legendary,
     Tag.DropChance_Lootable,
     Tag.DropChance_Pearlescent,
@@ -132,7 +130,6 @@ DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
     Tag.VHC_Vladof_Enabler: False,
     Tag.VHC_Vladof_Expanded_Enabler: False,
     Tag.DropChance_EWO: 12.0,
-    Tag.DropChance_Common: 100.0,
     Tag.DropChance_Lootable: 10.0,
     Tag.DropChance_Legendary: 2.0,
     Tag.DropChance_Pearlescent: 0.1,
