@@ -1,12 +1,13 @@
 from typing import List, Callable
 
+from unrealsdk import logging
 from mods_base.options import BaseOption, ButtonOption, NestedOption, GroupedOption
 from ui_utils import OptionBox, OptionBoxButton
 
 from ..mapping.object_proxy import Tag, TagProxy
 from ..mapping.internal_object_mappings import VHC_CONFIG_LIST, BASE_DROP_CHANCES, CHEST_MULTIPLIERS
 from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
-from ..ui_helpers import update_drawn_items, update_option
+from ..ui_helpers import update_drawn_items
 
 __all__ = [
     "create_option_list"
@@ -134,33 +135,117 @@ def _button_reset_chest_rarities(self: ButtonOption) -> None:
     confirmation_box(message="Are you sure you want to reset all chest multipliers to their default values?", on_yes=_on_yes)
 
 
-@VHCSpinner("Vault Hunter Challenges", normal=Tag.VHC_Enabler, expanded=Tag.VHC_Expanded_Enabler, on_change=None)
-def _vhc_enabler_spinner(self: VHCSpinner, value: str) -> None:
-    if value == "Off":
-        self.set_normal(False)
-        self.set_expanded(False)
+# noinspection PyArgumentList
+@ButtonOption("> Presets")
+def _vhc_enabler_spinner(self: VHCSpinner) -> None:
+    should_trigger = True
 
-        # Disable all
-        for _, normal, expanded in VHC_CONFIG_LIST:
-            TagProxy(normal).set_value(False)
-            if expanded is not None:
-                TagProxy(expanded).set_value(False)
+    # TODO: This could be implemented as a spinner?
 
-    elif value == "Normal":
-        self.set_normal(True)
-        self.set_expanded(False)
+    def _impl_on_select(_, btn: OptionBoxButton) -> None:
 
-        # Disable
-        for _, _, expanded in VHC_CONFIG_LIST:
-            if expanded is not None:
-                TagProxy(expanded).set_value(False)
+        nonlocal should_trigger
 
-    elif value == "Expanded":
-        self.set_normal(True)
-        self.set_expanded(True)
+        if not should_trigger:
+            logging.dev_warning(f'Why does this fire more than once?')
+            return
 
-    _cascade_option_values(self)
-    update_drawn_items()
+        should_trigger = False
+
+        def set_all(normal: bool, expanded: bool) -> None:
+            for _, normal_tag, expanded_tag in VHC_CONFIG_LIST:
+                TagProxy(normal_tag).set_value(normal)
+                if expanded_tag is not None:
+                    TagProxy(expanded_tag).set_value(expanded)
+
+        def vhc_set_values(normal: bool, expanded: bool) -> None:
+            TagProxy(Tag.VHC_Enabler).set_value(normal)
+            TagProxy(Tag.VHC_Expanded_Enabler).set_value(expanded)
+            _cascade_option_values(self)
+            update_drawn_items()
+
+        if btn.name == "All Off":
+            set_all(False, False)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(False)
+            vhc_set_values(False, False)
+
+        elif btn.name == "All Normal":
+            set_all(True, False)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(False)
+            vhc_set_values(True, False)
+
+        elif btn.name == "All Expanded":
+            set_all(True, True)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(False)
+            vhc_set_values(True, True)
+
+        elif btn.name == "Randomizer":
+            set_all(False, False)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(True)
+            vhc_set_values(True, True)  # Assuming it uses both?
+
+        elif btn.name == "Everything?":
+            set_all(True, True)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(True)
+            vhc_set_values(True, True)
+
+        elif btn.name == "Random Manufacturer":
+            set_all(False, False)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(False)
+
+            from secrets import randbelow
+            index = randbelow(len(VHC_CONFIG_LIST))
+            _, normal, expanded = VHC_CONFIG_LIST[index]
+
+            has_expanded = randbelow(2) == 1
+
+            TagProxy(normal).set_value(True)
+            if has_expanded and expanded is not None:
+                TagProxy(expanded).set_value(has_expanded)
+
+            vhc_set_values(True, has_expanded)
+        elif btn.name == "Random Manufacturers":
+            set_all(False, False)
+            TagProxy(Tag.VHC_Randomizer_Enabler).set_value(False)
+
+            from secrets import randbelow
+            manufacturer_count = max(randbelow(len(VHC_CONFIG_LIST)), 2)
+            to_change = dict()
+
+            while len(to_change) < manufacturer_count:
+                index = randbelow(len(VHC_CONFIG_LIST))
+                tag_id, normal, expanded = VHC_CONFIG_LIST[index]
+                if tag_id not in to_change:
+                    to_change[tag_id] = (normal, expanded)
+
+            has_expanded = False
+
+            for tag_id, (normal, expanded) in to_change.items():
+                TagProxy(normal).set_value(True)
+                if expanded is not None:
+                    v = randbelow(2) == 1
+                    if v and not has_expanded:
+                        has_expanded = True
+                    TagProxy(expanded).set_value(v)
+
+            vhc_set_values(True, has_expanded)
+
+    enabler = OptionBox(
+        title="Presets",
+        message="Choose a preset to for Vault Hunter Challenges!",
+        buttons=[
+            OptionBoxButton("All Off"),
+            OptionBoxButton("Randomizer"),
+            OptionBoxButton("All Normal"),
+            OptionBoxButton("All Expanded"),
+            OptionBoxButton("Random Manufacturer"),
+            OptionBoxButton("Random Manufacturers"),
+            OptionBoxButton("Everything?"),
+        ],
+        on_select=_impl_on_select
+    )
+
+    enabler.show()
 
 
 ################################################################################

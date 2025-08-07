@@ -1,8 +1,6 @@
-from typing import cast
 from mods_base.options import BoolOption, SpinnerOption, SliderOption
 
 from ..mapping.object_proxy import Tag, TagProxy
-from ..ui_helpers import update_option
 
 ################################################################################
 # | EXPORTS |
@@ -79,10 +77,6 @@ class VHCSpinner(SpinnerOption):
     @staticmethod
     def _on_change(self: "VHCSpinner", val: str) -> None:
 
-        from .option_list import _vhc_enabler_spinner
-
-        vhc_enabler: VHCSpinner = cast(VHCSpinner, _vhc_enabler_spinner)
-
         if val == "Off":
             self.set_normal(False)
             self.set_expanded(False)
@@ -90,19 +84,13 @@ class VHCSpinner(SpinnerOption):
         elif val == "Normal":
             self.set_normal(True)
             self.set_expanded(False)
-
-            vhc_enabler.set_normal(True)
-            vhc_enabler.fetch_proxy_value()
-            update_option(vhc_enabler, check_drawn_options=True)
+            TagProxy(Tag.VHC_Enabler).set_value(True)
 
         elif val == "Expanded":
             self.set_normal(True)
             self.set_expanded(True)
-
-            vhc_enabler.set_normal(True)
-            vhc_enabler.set_expanded(True)
-            vhc_enabler.fetch_proxy_value()
-            update_option(vhc_enabler, check_drawn_options=True)
+            TagProxy(Tag.VHC_Enabler).set_value(True)
+            TagProxy(Tag.VHC_Expanded_Enabler).set_value(True)
 
     def get_str_value_from_proxy(self) -> str:
         if self._expanded_tag and bool(self._expanded_tag.value(allow_default=True)):
