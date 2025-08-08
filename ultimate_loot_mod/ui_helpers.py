@@ -1,12 +1,15 @@
-from typing import Protocol, runtime_checkable, Iterable, Generator
+from typing import Protocol, runtime_checkable, Iterable, Generator, Any
 from functools import wraps
 
-from unrealsdk.unreal import UObject
+from unrealsdk.unreal import UObject, WrappedStruct, BoundFunction
 from unrealsdk import logging
 
+from mods_base import hook
+
 import willow1_mod_menu as wmm
+
 from willow1_mod_menu.populators import Populator
-from willow1_mod_menu.util import WillowGFxMenu
+from willow1_mod_menu.util import WillowGFxMenu, ASType
 
 from mods_base import (
     Mod,
@@ -33,6 +36,7 @@ __all__ = [
 # | GLOBALS |
 ################################################################################
 
+_create_nested_options_menu = wmm.options.create_nested_options_menu
 _draw_custom_menu = wmm.options.draw_custom_menu
 _fmt_slider_label = wmm.populators.Populator.format_slider_label
 
@@ -48,9 +52,69 @@ _last_populator: Populator | None = None
 def _store_last_menu(menu: WillowGFxMenu) -> None:
     global _last_drawn_menu
     global _last_populator
+
     _last_drawn_menu = menu
     _last_populator = wmm.options.populator_stack[-1]
     _draw_custom_menu(menu)
+
+    def set_selected_item(movie: UObject, item: str) -> None:
+        item_index = int(item[item.rfind(".item") + 5:])
+
+        logging.info(f"[UI_HELPERS] ~ Menu Focus ( '{item_index}' )")
+
+        invoke = movie.Invoke
+        params = WrappedStruct(invoke.func)
+        params.args.emplace_struct(Type=ASType.AS_Number, N=item_index)
+        params.Method = f'{item[:item.rfind(".mList")]}.mList.setSelectedItem'
+        invoke(params)
+
+    def set_ypos(movie: UObject, item: str, ypos: float) -> None:
+        movie.SetVariableNumber(f'{item[:item.rfind(".mList")]}.mList._y', ypos)
+
+    # Restore original menu position
+    if hasattr(_last_populator, "_cached_ypos") and hasattr(_last_populator, "_cached_focused_item"):
+        item = _last_populator._cached_focused_item
+        ypos = _last_populator._cached_ypos
+        original_tick_rate = menu.TickRateSeconds
+        menu.TickRateSeconds = 1.0 / 60.0
+
+        # You can't instantly update the selection I would assume because its potentially running
+        # in parallel or async so it may not be finished til the next frame
+        @hook("GearboxFramework.GearboxGFxMovie:OnTick")
+        def do_this_shit_next_tick(
+            obj: UObject,
+            _args: WrappedStruct,
+            _ret: Any,
+            _func: BoundFunction,
+        ) -> None:
+            nonlocal item
+            nonlocal ypos
+            nonlocal menu
+            nonlocal original_tick_rate
+
+            if obj != menu:
+                return
+
+            # This one does not work immediately after `LobbyTools.endMenu()` is called need to wait a few frames
+            set_selected_item(menu, item)
+
+            # This seems to always work
+            set_ypos(menu, item, ypos)
+
+            # Can be the empty string, unsure why but if so then try again next tick
+            focused_item = wmm.util.find_focused_item(menu)
+
+            # Only stop trying to mess with the selection when it worked
+            if len(focused_item) != 0:
+                obj.TickRateSeconds = original_tick_rate
+                do_this_shit_next_tick.disable()
+
+            logging.info(f"[UI_HELPERS] ~ Menu Restore ( '{ypos}', '{item}', '{wmm.util.find_focused_item(menu)}' )")
+
+        do_this_shit_next_tick.enable()
+
+        delattr(_last_populator, "_cached_focused_item")
+        delattr(_last_populator, "_cached_ypos")
 
 
 wmm.options.draw_custom_menu = _store_last_menu
