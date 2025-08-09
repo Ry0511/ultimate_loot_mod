@@ -1,26 +1,17 @@
 from typing import Tuple
-from pathlib import Path
 
 from unrealsdk import logging
 from mods_base import build_mod, Mod
-from mods_base.settings import SETTINGS_DIR
 
 from .mapping.object_proxy import Tag, load_all_objects, TagProxy
 from .options.option_list import create_option_list
 
-from . import ui_edits  # noqa
+import ultimate_loot_mod.ui_edits  # noqa
 from .ui_edits import auto_tag_all_options
 
 from .options.lazy_loading_sequence import LazyLoadedOptionSequence
 
-# from .ui_helpers import set_all_menu_tags
-
 __version__: Tuple[int, int]
-
-# Delete original config file if it exists
-CONFIG_FILE: Path = SETTINGS_DIR / "ultimate_loot_mod.json"
-CONFIG_FILE.unlink(True)
-
 
 def _on_enable() -> None:
     auto_tag_all_options(the_mod, the_mod.options)
