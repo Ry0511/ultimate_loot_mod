@@ -7,7 +7,8 @@ from ui_utils import OptionBox, OptionBoxButton
 from ..mapping.object_proxy import Tag, TagProxy
 from ..mapping.internal_object_mappings import VHC_CONFIG_LIST, BASE_DROP_CHANCES, CHEST_MULTIPLIERS
 from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
-from ..ui_helpers import update_drawn_items
+
+from ..ui_edits.refresh_options import refresh_last_drawn_options
 
 __all__ = [
     "create_option_list"
@@ -25,10 +26,13 @@ def confirmation_box(message: str, on_yes: Callable[[], None]) -> None:
         nonlocal on_yes
         nonlocal trigger_update
 
+        if not trigger_update:
+            logging.dev_warning('Confirmation option box has triggered twice?')
+
         # Seems this will fire twice?
         if btn.name == "Yes" and trigger_update:
             on_yes()
-            update_drawn_items()
+            refresh_last_drawn_options()
             trigger_update = False
 
     confirm = OptionBox(
@@ -65,34 +69,6 @@ def _button_reset_all(self: ButtonOption) -> None:
 
     confirmation_box(
         message="Are you sure you want to reset everything back to their default values?",
-        on_yes=_on_yes
-    )
-
-
-# noinspection PyArgumentList
-@ButtonOption("Reset All")
-def _button_reset_vhc_config(self: ButtonOption) -> None:
-    def _on_yes() -> None:
-        has_normal = False
-        has_expanded = False
-        for _, normal, expanded in VHC_CONFIG_LIST:
-            proxy = TagProxy(normal)
-            val: bool = bool(proxy.default_value())
-            has_normal = has_normal or val
-            proxy.set_value(val)
-
-            if expanded is not None:
-                proxy = TagProxy(expanded)
-                val: bool = bool(proxy.default_value())
-                proxy.set_value(val)
-                has_expanded = has_expanded or val
-
-        proxy = TagProxy(Tag.VHC_Randomizer_Enabler)
-        proxy.set_value(proxy.default_value())
-        _cascade_option_values(self)
-
-    confirmation_box(
-        message="Are you sure you want to reset all Vault Hunter Challenges options to their default values?",
         on_yes=_on_yes
     )
 
@@ -135,6 +111,7 @@ def _button_reset_chest_rarities(self: ButtonOption) -> None:
     confirmation_box(message="Are you sure you want to reset all chest multipliers to their default values?", on_yes=_on_yes)
 
 
+# TODO: Might be a good idea to move this one out as it is a bit more complex than the others
 # noinspection PyArgumentList
 @ButtonOption("> Presets")
 def _vhc_enabler_spinner(self: VHCSpinner) -> None:
@@ -159,10 +136,10 @@ def _vhc_enabler_spinner(self: VHCSpinner) -> None:
                     TagProxy(expanded_tag).set_value(expanded)
 
         def vhc_set_values(normal: bool, expanded: bool) -> None:
-            #TagProxy(Tag.VHC_Enabler).set_value(normal)
-            #TagProxy(Tag.VHC_Expanded_Enabler).set_value(expanded)
+            # TagProxy(Tag.VHC_Enabler).set_value(normal)
+            # TagProxy(Tag.VHC_Expanded_Enabler).set_value(expanded)
             _cascade_option_values(self)
-            update_drawn_items()
+            refresh_last_drawn_options()
 
         if btn.name == "All Off":
             set_all(False, False)
@@ -262,7 +239,6 @@ def create_option_list() -> List[BaseOption]:
                 TagToggleOption("Arsenal", Tag.Arsenal_Enabler),
                 TagToggleOption("EWO", Tag.EWO_Enabler),
                 NestedOption("> Vault Hunter Challenges", children=[
-                    _button_reset_vhc_config,
                     _vhc_enabler_spinner,
                     TagToggleOption("Randomizer", Tag.VHC_Randomizer_Enabler),
                     GroupedOption("Manufacturers", children=[

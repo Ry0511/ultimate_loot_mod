@@ -8,7 +8,10 @@ from mods_base.settings import SETTINGS_DIR
 from .mapping.object_proxy import Tag, load_all_objects
 from .options.option_list import create_option_list
 
-from .ui_helpers import set_all_menu_tags
+from . import ui_edits  # noqa
+from .ui_edits import auto_tag_all_options
+
+# from .ui_helpers import set_all_menu_tags
 
 __version__: Tuple[int, int]
 
@@ -29,6 +32,7 @@ the_mod: Mod = build_mod(
 )
 
 # 0 is Description, 1 is Enabled On/Off, 2 is first option
-set_all_menu_tags(start_index=2, mod=the_mod)
+# set_all_menu_tags(start_index=2, mod=the_mod)
+auto_tag_all_options(the_mod)
 
 logging.info(f"Successfully loaded {the_mod.name} v{the_mod.version}")
