@@ -74,16 +74,42 @@ def _button_reset_all(self: ButtonOption) -> None:
 
 
 # noinspection PyArgumentList
-@ButtonOption("Reset All Drop Rates and Multipliers")
+@ButtonOption("Reset Drop Rates")
 def _button_reset_drop_rates(self: ButtonOption) -> None:
-    def _on_yes() -> None:
-        for tag in iter(BASE_DROP_CHANCES + CHEST_MULTIPLIERS):
-            proxy = TagProxy(tag)
-            proxy.set_value(proxy.default_value())
+    def _on_select(_, btn: OptionBoxButton) -> None:
+        if btn.name == "Nothing!":
+            return
+
+        elif btn.name == "Drop Rates":
+            for tag in BASE_DROP_CHANCES:
+                proxy = TagProxy(tag)
+                proxy.set_value(proxy.default_value())
+
+        elif btn.name == "Chest Multipliers":
+            for tag in CHEST_MULTIPLIERS:
+                proxy = TagProxy(tag)
+                proxy.set_value(proxy.default_value())
+
+        elif btn.name == "Drop Rates and Multipliers":
+            for tag in BASE_DROP_CHANCES + CHEST_MULTIPLIERS:
+                proxy = TagProxy(tag)
+                proxy.set_value(proxy.default_value())
 
         _cascade_option_values(self)
 
-    confirmation_box(message="Are you sure you want to reset all drop rates to their default values?", on_yes=_on_yes)
+    box = OptionBox(
+        title="Confirmation",
+        message="Select what you want to reset back to their default values",
+        buttons=[
+            OptionBoxButton("Nothing!"),
+            OptionBoxButton("Drop Rates"),
+            OptionBoxButton("Chest Multipliers"),
+            OptionBoxButton("Drop Rates and Multipliers"),
+        ],
+        on_select=_on_select
+    )
+
+    box.show()
 
 
 # noinspection PyArgumentList
@@ -97,18 +123,6 @@ def _button_reset_drop_chances(self: ButtonOption) -> None:
         _cascade_option_values(self)
 
     confirmation_box(message="Are you sure you want to reset all drop chances to their default values?", on_yes=_on_yes)
-
-
-# noinspection PyArgumentList
-@ButtonOption("Reset Multipliers")
-def _button_reset_chest_rarities(self: ButtonOption) -> None:
-    def _on_yes() -> None:
-        for tag in CHEST_MULTIPLIERS:
-            proxy = TagProxy(tag)
-            proxy.set_value(proxy.default_value())
-        _cascade_option_values(self)
-
-    confirmation_box(message="Are you sure you want to reset all chest multipliers to their default values?", on_yes=_on_yes)
 
 
 # TODO: Might be a good idea to move this one out as it is a bit more complex than the others
@@ -261,7 +275,6 @@ def create_option_list() -> List[BaseOption]:
                 RaritySlider("Legendaries", Tag.DropChance_Legendary, step=0.5, value_suffix="%"),
                 RaritySlider("Pearls", Tag.DropChance_Pearlescent, step=0.1, value_suffix="%"),
             ]),
-            _button_reset_chest_rarities,
             NestedOption("> White Chest Multiplier", children=[
                 RaritySlider("Legendaries", Tag.Multiplier_WhiteChest_Legendary, is_scalar=True, value_suffix="x"),
                 RaritySlider("Pearls", Tag.Multiplier_WhiteChest_Pearlescent, is_scalar=True, value_suffix="x"),
