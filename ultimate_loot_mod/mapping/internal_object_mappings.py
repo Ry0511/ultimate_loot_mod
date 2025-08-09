@@ -101,7 +101,8 @@ CHEST_MULTIPLIERS: List[Tag] = [
 # | DEFAULT VALUE MAPPING |
 ################################################################################
 
-# Static defaults
+# NOTE: These get overwritten by the actual values when initially loading.
+
 DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
     Tag.Arsenal_Enabler: True,
     Tag.BetterHealth_Enabler: True,

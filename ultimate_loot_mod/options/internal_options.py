@@ -84,13 +84,13 @@ class VHCSpinner(SpinnerOption):
         elif val == "Normal":
             self.set_normal(True)
             self.set_expanded(False)
-            #TagProxy(Tag.VHC_Enabler).set_value(True)
+            # TagProxy(Tag.VHC_Enabler).set_value(True)
 
         elif val == "Expanded":
             self.set_normal(True)
             self.set_expanded(True)
-            #TagProxy(Tag.VHC_Enabler).set_value(True)
-            #TagProxy(Tag.VHC_Expanded_Enabler).set_value(True)
+            # TagProxy(Tag.VHC_Enabler).set_value(True)
+            # TagProxy(Tag.VHC_Expanded_Enabler).set_value(True)
 
     def get_str_value_from_proxy(self) -> str:
         if self._expanded_tag and bool(self._expanded_tag.value(allow_default=True)):

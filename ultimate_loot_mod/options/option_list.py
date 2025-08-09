@@ -11,7 +11,7 @@ from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
 from ..ui_edits.refresh_options import refresh_last_drawn_options
 
 __all__ = [
-    "create_option_list"
+    "create_option_list",
 ]
 
 

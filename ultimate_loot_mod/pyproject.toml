@@ -1,6 +1,6 @@
 [project]
-authors = [{ "name" = "Ry" }, { "name" = "sleepmaster" }]
-description = "Configuration manager for sleepmasters Ultimate Loot Mod"
+authors = [{ "name" = "sleepmaster" }, { "name" = "Ry" }, ]
+description = "Configuration manager for sleepmaster's Ultimate Loot Mod"
 
 [tool.sdkmod]
 version = "0.0"

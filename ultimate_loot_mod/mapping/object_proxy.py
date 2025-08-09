@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from unrealsdk import load_package, find_object, logging
 from unrealsdk.unreal import UObject
 
-from mods_base import ObjectFlags
+from mods_base import ObjectFlags  # noqa
 
 from .attribute_types import *
 from .internal_object_list import Tag
@@ -41,17 +41,21 @@ def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
     return True
 
 
-def load_all_objects() -> int:
-    fail_count = 0
+def load_all_objects() -> bool:
+    # Ensure these are loaded first
     load_package("UltimateLoot_Attributes_TEST")
     load_package("UltimateLoot_Lootables_TEST")
     load_package("UltimateLoot_Pools_TEST")
 
+    no_errors = True
+
+    # Try fetch and keep alive the configuration objects
     for tag in Tag:
         proxy = TagProxy(tag)
         if not proxy.try_load_object():
-            fail_count += 1
-    return fail_count
+            no_errors = False
+
+    return no_errors
 
 
 ################################################################################
@@ -116,6 +120,14 @@ class TagProxy:
             except ValueError:
                 logging.warning(f"Failed to load object {self.path()}")
         return LOADED_OBJECT_MAPPING[self.tag] is not None
+
+    def unload_object(self) -> None:
+        if not (obj := self.object()):
+            return
+
+        # Remove keep alive flag and clear mapping
+        obj.ObjectFlags &= (~ObjectFlags.KEEP_ALIVE)
+        LOADED_OBJECT_MAPPING[self.tag] = None
 
     def force_int_to_float(self) -> None:
         if not self.try_load_object():
