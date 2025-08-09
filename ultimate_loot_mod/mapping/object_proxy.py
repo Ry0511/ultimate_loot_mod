@@ -52,7 +52,10 @@ def load_all_objects() -> bool:
     # Try fetch and keep alive the configuration objects
     for tag in Tag:
         proxy = TagProxy(tag)
-        if not proxy.try_load_object():
+
+        if proxy.is_loaded():
+            continue
+        elif not proxy.try_load_object():
             no_errors = False
         else:
             # Update the default value to whatever the game has stored
@@ -77,6 +80,9 @@ class TagProxy:
     @staticmethod
     def class_type() -> str:
         return 'AttributeDefinition'
+
+    def is_loaded(self) -> bool:
+        return LOADED_OBJECT_MAPPING[self.tag] is not None
 
     def path(self) -> str:
         return OBJECT_PATH_MAPPING[self.tag]
