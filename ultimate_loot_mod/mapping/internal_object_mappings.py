@@ -101,7 +101,8 @@ CHEST_MULTIPLIERS: List[Tag] = [
 # | DEFAULT VALUE MAPPING |
 ################################################################################
 
-# NOTE: These get overwritten by the actual values when initially loading.
+# NOTE
+#   These get overwritten by the actual values when initially loading the game objects
 
 DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
     Tag.Arsenal_Enabler: True,

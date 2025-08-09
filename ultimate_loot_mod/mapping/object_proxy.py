@@ -54,6 +54,9 @@ def load_all_objects() -> bool:
         proxy = TagProxy(tag)
         if not proxy.try_load_object():
             no_errors = False
+        else:
+            # Update the default value to whatever the game has stored
+            proxy.set_default_value(proxy.value(allow_default=True))
 
     return no_errors
 
@@ -106,6 +109,9 @@ class TagProxy:
             from traceback import format_exc
             logging.error(format_exc(4))
             return False
+
+    def set_default_value(self, value: AttributeDataType) -> None:
+        DEFAULT_VALUE_MAPPING[self.tag] = value
 
     def try_load_object(self) -> bool:
         if LOADED_OBJECT_MAPPING[self.tag] is None:
