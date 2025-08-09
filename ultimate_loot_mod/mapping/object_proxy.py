@@ -42,10 +42,11 @@ def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
 
 
 def load_all_objects() -> bool:
-    # Ensure these are loaded first
+    # TODO: This can cause a crash at startup. Unsure why but I would assume it is just too early
+    #  to try and load a package. We don't need to load the package immediately, but it does
+    #  guarantee all objects are loaded which simplifies things.
     load_package("UltimateLoot_Attributes_TEST")
     load_package("UltimateLoot_Lootables_TEST")
-    load_package("UltimateLoot_Pools_TEST")
 
     no_errors = True
 
@@ -90,6 +91,9 @@ class TagProxy:
     def default_value(self) -> AttributeDataType | None:
         return DEFAULT_VALUE_MAPPING[self.tag]
 
+    def first_load_value(self) -> AttributeDataType | None:
+        return FIRST_LOAD_VALUE_MAPPING[self.tag]
+
     def object(self) -> UObject | None:
         self.try_load_object()
         return LOADED_OBJECT_MAPPING[self.tag]
@@ -118,6 +122,9 @@ class TagProxy:
 
     def set_default_value(self, value: AttributeDataType) -> None:
         DEFAULT_VALUE_MAPPING[self.tag] = value
+
+    def set_first_load_value(self, value: AttributeDataType) -> None:
+        FIRST_LOAD_VALUE_MAPPING[self.tag] = value
 
     def try_load_object(self) -> bool:
         if LOADED_OBJECT_MAPPING[self.tag] is None:

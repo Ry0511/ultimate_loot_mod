@@ -13,7 +13,6 @@ from .options.lazy_loading_sequence import LazyLoadedOptionSequence
 
 __version__: Tuple[int, int]
 
-
 def _on_enable() -> None:
     if load_all_objects():
         return
@@ -23,6 +22,7 @@ def _on_enable() -> None:
 
 
 def _on_disable() -> None:
+    # This doesn't delete the object but should allow the object to be garbage collected
     for tag in Tag:
         TagProxy(tag).unload_object()
 
@@ -31,6 +31,10 @@ def _on_load_options():
     global the_mod
     load_all_objects()
 
+    # By the time Mod.__post_init__ associates the mod with the options we would/could have already
+    # tried accessing the Mod object on an option. We only need to access the option list so could
+    # keep a global reference to it but that introduces different issues which would also need to be
+    # catered for.
     def set_mod(all_options) -> None:
         from mods_base import NestedOption, GroupedOption
 
@@ -43,6 +47,7 @@ def _on_load_options():
     set_mod(all_options)
     auto_tag_all_options(the_mod, all_options)
     return all_options
+
 
 # This is a fair bit more complex than it needs to be...
 def create_mod() -> Mod:
@@ -104,5 +109,10 @@ the_mod.options = LazyLoadedOptionSequence(_on_load_options)
 the_mod.__post_init__()
 
 register_mod(the_mod)
+
+for tag in Tag:
+    proxy = TagProxy(tag)
+    proxy.set_first_load_value(proxy.value(allow_default=True))
+
 
 logging.info(f"Successfully loaded {the_mod.name} v{the_mod.version}")

@@ -72,6 +72,21 @@ def _button_reset_all(self: ButtonOption) -> None:
         on_yes=_on_yes
     )
 
+# noinspection PyArgumentList
+@ButtonOption("Restore First Loaded Values")
+def _button_restore_first_load_values(self: ButtonOption) -> None:
+    def _on_yes() -> None:
+        for tag in Tag:
+            proxy = TagProxy(tag)
+            proxy.set_value(proxy.first_load_value())
+        _cascade_option_values(self)
+
+    confirmation_box(
+        message="Are you sure you want to restore all options to the state at which they were in "
+                "when they were first loaded? \n\nThis will undo any changes you have made!",
+        on_yes=_on_yes
+    )
+
 
 # noinspection PyArgumentList
 @ButtonOption("Reset Drop Rates")
@@ -250,6 +265,7 @@ def create_option_list() -> List[BaseOption]:
             "General",
             children=[
                 _button_reset_all,
+                _button_restore_first_load_values,
                 TagToggleOption("Arsenal", Tag.Arsenal_Enabler),
                 TagToggleOption("EWO", Tag.EWO_Enabler),
                 NestedOption("> Vault Hunter Challenges", children=[

@@ -9,6 +9,7 @@ __all__ = [
     "OBJECT_PATH_MAPPING",
     "VHC_CONFIG_LIST",
     "DEFAULT_VALUE_MAPPING",
+    "FIRST_LOAD_VALUE_MAPPING",
     "LOADED_OBJECT_MAPPING",
     "BASE_DROP_CHANCES",
     "CHEST_MULTIPLIERS",
@@ -142,5 +143,7 @@ DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
     Tag.Multiplier_WhiteChest_Legendary: 25.0,
     Tag.Multiplier_WhiteChest_Pearlescent: 5.0,
 }
+
+FIRST_LOAD_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {}
 
 LOADED_OBJECT_MAPPING: Dict[Tag, UObject | None] = {tag: None for tag in Tag}
