@@ -1,4 +1,3 @@
-from unrealsdk.unreal import UObject
 from mods_base.options import BaseOption, HiddenOption, SliderOption, BoolOption, SpinnerOption, GroupedOption
 
 from .utils import WillowGFxMenu, Populator, get_menu_tag
