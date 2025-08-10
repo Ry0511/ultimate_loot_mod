@@ -3,7 +3,7 @@ from typing import Tuple
 import ultimate_loot_mod.ui_edits  # noqa
 
 from unrealsdk import logging
-from mods_base import build_mod
+from mods_base import build_mod, command
 
 from .mapping.object_proxy import Tag, load_all_objects, TagProxy
 from .options.option_list import create_option_list
@@ -36,9 +36,22 @@ if not components.has_ewo:
 
 load_all_objects()
 
+
+@command("ulm_dump_cfg")
+def ulm_dump_cfg(*_) -> None:
+    for tag in Tag:
+        proxy = TagProxy(tag)
+        value = f'{proxy.value(convert_to_py_type=False):.9f}'
+        padding = max(3 - len(value.split(".")[0]), 0)
+        print(f"{tag.name:>40} | {' ' * padding}{value} | {proxy.value()}")
+
+
+ulm_dump_cfg.enable()
+
 build_mod(
     cls=UltimateLootMod,
     options=create_option_list(),
+    commands=[ulm_dump_cfg],
     on_enable=_on_enable,
     on_disable=_on_disable,
     auto_enable=components.has_ulm,
