@@ -3,7 +3,7 @@ from typing import Tuple
 import ultimate_loot_mod.ui_edits  # noqa
 
 from unrealsdk import logging
-from mods_base import build_mod, ButtonOption
+from mods_base import build_mod
 
 from .mapping.object_proxy import Tag, load_all_objects, TagProxy
 from .options.option_list import create_option_list

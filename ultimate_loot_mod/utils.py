@@ -1,4 +1,3 @@
-from unrealsdk import logging
 from typing import runtime_checkable, Protocol, Iterable
 
 from mods_base import BaseOption, NestedOption, GroupedOption
@@ -37,7 +36,3 @@ def sync_proxies_with_options() -> None:
     for opt in walk_options(the_mod().options):
         if isinstance(opt, SupportsValueSync):
             opt.sync_proxy()
-
-
-def has_ulm_installed() -> bool:
-    return True
