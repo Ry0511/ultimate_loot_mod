@@ -11,6 +11,7 @@ __all__ = [
     "sync_proxies_with_options",
 ]
 
+
 @runtime_checkable
 class SupportsValueSync(Protocol):
     def sync_with_proxy(self) -> None: ...
@@ -36,3 +37,7 @@ def sync_proxies_with_options() -> None:
     for opt in walk_options(the_mod().options):
         if isinstance(opt, SupportsValueSync):
             opt.sync_proxy()
+
+
+def has_ulm_installed() -> bool:
+    return True

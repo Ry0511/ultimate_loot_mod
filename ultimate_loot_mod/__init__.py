@@ -3,13 +3,13 @@ from typing import Tuple
 import ultimate_loot_mod.ui_edits  # noqa
 
 from unrealsdk import logging
-from mods_base import build_mod
+from mods_base import build_mod, ButtonOption
 
 from .mapping.object_proxy import Tag, load_all_objects, TagProxy
 from .options.option_list import create_option_list
 from .ui_edits import auto_tag_all_options
 
-from .ultimate_loot_mod import UltimateLootMod, the_mod
+from .ultimate_loot_mod import UltimateLootMod, InstalledComponents, the_mod
 
 __version__: Tuple[int, int]
 
@@ -23,9 +23,17 @@ def _on_disable() -> None:
         TagProxy(tag).unload_object()
 
 
-# TODO: Need to change how options are loaded and applied because this approach can cause crashes.
-#  Unfortunately there isn't a nice way to do this since we're integrating with quite a few systems
-#  that we don't have control over.
+components = InstalledComponents()
+
+if not components.has_ulm:
+    logging.warning("Could not detect UltimateLoot Mod files; The mod may not function correctly!")
+
+if not components.has_arsenal:
+    logging.warning("Could not detect Arsenal mod files!")
+
+if not components.has_ewo:
+    logging.warning("Could not detect EWO mod files!")
+
 load_all_objects()
 
 build_mod(
@@ -33,6 +41,7 @@ build_mod(
     options=create_option_list(),
     on_enable=_on_enable,
     on_disable=_on_disable,
+    auto_enable=components.has_ulm,
 )
 
 auto_tag_all_options(the_mod(), the_mod().options)
