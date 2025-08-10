@@ -44,7 +44,9 @@ def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
 def load_all_objects() -> bool:
     # TODO: This can cause a crash at startup. Unsure why but I would assume it is just too early
     #  to try and load a package. We don't need to load the package immediately, but it does
-    #  guarantee all objects are loaded which simplifies things.
+    #  guarantee all objects are loaded which simplifies things. I am moderately curious if using
+    #  StaticLoadObject could avoid the crash here.
+
     load_package("UltimateLoot_Attributes_TEST")
     load_package("UltimateLoot_Lootables_TEST")
 
