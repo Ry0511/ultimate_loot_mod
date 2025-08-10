@@ -52,17 +52,17 @@ def load_all_objects() -> bool:
 
     no_errors = True
 
-    # Try fetch and keep alive the configuration objects
     for tag in Tag:
         proxy = TagProxy(tag)
-
-        if proxy.is_loaded():
-            continue
-        elif not proxy.try_load_object():
+        if not proxy.try_load_object():
             no_errors = False
-        else:
-            # Update the default value to whatever the game has stored
-            proxy.set_default_value(proxy.value(allow_default=True))
+            logging.dev_warning(f"Failed to load {tag.name}")
+
+    if not no_errors:
+        logging.warning(
+            "Failed to load some Ultimate Loot Mod objects;"
+            " Some configuration options may not apply!"
+        )
 
     return no_errors
 
@@ -76,9 +76,7 @@ class TagProxy:
     tag: Tag
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, TagProxy):
-            return self.tag == other.tag
-        return False
+        return isinstance(other, TagProxy) and self.tag == other.tag
 
     @staticmethod
     def class_type() -> str:
@@ -94,6 +92,8 @@ class TagProxy:
         return DEFAULT_VALUE_MAPPING[self.tag]
 
     def first_load_value(self) -> AttributeDataType | None:
+        if self.tag not in FIRST_LOAD_VALUE_MAPPING:
+            return None
         return FIRST_LOAD_VALUE_MAPPING[self.tag]
 
     def object(self) -> UObject | None:
@@ -111,6 +111,7 @@ class TagProxy:
             return self.default_value() if allow_default else None
 
     def set_value(self, value: AttributeDataType) -> bool:
+
         if not self.try_load_object():
             return False
 
@@ -132,11 +133,17 @@ class TagProxy:
         if LOADED_OBJECT_MAPPING[self.tag] is None:
             try:
                 LOADED_OBJECT_MAPPING[self.tag] = find_object(self.class_type(), self.path())
-                LOADED_OBJECT_MAPPING[self.tag].ObjectFlags |= ObjectFlags.KEEP_ALIVE
+                LOADED_OBJECT_MAPPING[self.tag].ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
+
                 # Seems a few of the attributes use ADT_Int when they want fractional numbers.
                 # Since it is stored as a float anyway we might as well just enforce it globally
                 # for all ADT_Int attributes
                 self.force_int_to_float()
+
+                # On the first load of the object grab whatever its current value is and store it.
+                if val := self.value():
+                    self.set_default_value(val)
+
                 return True
             except ValueError:
                 logging.warning(f"Failed to load object {self.path()}")
@@ -147,7 +154,7 @@ class TagProxy:
             return
 
         # Remove keep alive flag and clear mapping
-        obj.ObjectFlags &= (~ObjectFlags.KEEP_ALIVE)
+        obj.ObjectFlags &= (~ObjectFlags.KEEP_ALIVE)  # noqa
         LOADED_OBJECT_MAPPING[self.tag] = None
 
     def force_int_to_float(self) -> None:

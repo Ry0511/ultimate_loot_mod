@@ -9,6 +9,7 @@ from ..mapping.internal_object_mappings import VHC_CONFIG_LIST, BASE_DROP_CHANCE
 from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
 
 from ..ui_edits.refresh_options import refresh_last_drawn_options
+from ..utils import sync_options_with_proxies
 
 __all__ = [
     "create_option_list",
@@ -46,40 +47,31 @@ def confirmation_box(message: str, on_yes: Callable[[], None]) -> None:
     confirm.show()
 
 
-def _cascade_option_values(opt: BaseOption) -> None:
-    def recurse_fetch_values(options):
-        for opt in options:
-            if isinstance(opt, (GroupedOption, NestedOption)):
-                recurse_fetch_values(opt.children)
-            elif hasattr(opt, "fetch_proxy_value") and callable(opt.fetch_proxy_value):
-                opt.fetch_proxy_value()
-
-    recurse_fetch_values(opt.mod.options)
-
-
 # noinspection PyArgumentList
 @ButtonOption("Reset Everything (Literally)")
-def _button_reset_all(self: ButtonOption) -> None:
+def _button_reset_all(_: ButtonOption) -> None:
     def _on_yes() -> None:
         for tag in Tag:
             proxy = TagProxy(tag)
             proxy.set_value(proxy.default_value())
 
-        _cascade_option_values(self)
+        sync_options_with_proxies()
 
     confirmation_box(
         message="Are you sure you want to reset everything back to their default values?",
         on_yes=_on_yes
     )
 
+
 # noinspection PyArgumentList
 @ButtonOption("Restore First Loaded Values")
-def _button_restore_first_load_values(self: ButtonOption) -> None:
+def _button_restore_first_load_values(_: ButtonOption) -> None:
     def _on_yes() -> None:
         for tag in Tag:
             proxy = TagProxy(tag)
             proxy.set_value(proxy.first_load_value())
-        _cascade_option_values(self)
+
+        sync_options_with_proxies()
 
     confirmation_box(
         message="Are you sure you want to restore all options to the state at which they were in "
@@ -90,7 +82,7 @@ def _button_restore_first_load_values(self: ButtonOption) -> None:
 
 # noinspection PyArgumentList
 @ButtonOption("Reset Drop Rates")
-def _button_reset_drop_rates(self: ButtonOption) -> None:
+def _button_reset_drop_rates(_: ButtonOption) -> None:
     def _on_select(_, btn: OptionBoxButton) -> None:
         if btn.name == "Nothing!":
             return
@@ -110,7 +102,7 @@ def _button_reset_drop_rates(self: ButtonOption) -> None:
                 proxy = TagProxy(tag)
                 proxy.set_value(proxy.default_value())
 
-        _cascade_option_values(self)
+        sync_options_with_proxies()
 
     box = OptionBox(
         title="Confirmation",
@@ -129,29 +121,31 @@ def _button_reset_drop_rates(self: ButtonOption) -> None:
 
 # noinspection PyArgumentList
 @ButtonOption("Reset Drop Chances")
-def _button_reset_drop_chances(self: ButtonOption) -> None:
+def _button_reset_drop_chances(_: ButtonOption) -> None:
     def _on_yes() -> None:
         for tag in BASE_DROP_CHANCES:
             proxy = TagProxy(tag)
             proxy.set_value(proxy.default_value())
 
-        _cascade_option_values(self)
+        sync_options_with_proxies()
 
-    confirmation_box(message="Are you sure you want to reset all drop chances to their default values?", on_yes=_on_yes)
+    confirmation_box(
+        message="Are you sure you want to reset all drop chances to their default values?",
+        on_yes=_on_yes
+    )
 
 
 # TODO: Might be a good idea to move this one out as it is a bit more complex than the others
 # noinspection PyArgumentList
 @ButtonOption("> Presets")
-def _vhc_enabler_spinner(self: VHCSpinner) -> None:
+def _vhc_enabler_spinner(_: VHCSpinner) -> None:
     should_trigger = True
-
-    # TODO: This could be implemented as a spinner?
 
     def _impl_on_select(_, btn: OptionBoxButton) -> None:
 
         nonlocal should_trigger
 
+        # This doesn't seem to happen anymore, likely an issue on my end
         if not should_trigger:
             logging.dev_warning(f'Why does this fire more than once?')
             return
@@ -164,10 +158,10 @@ def _vhc_enabler_spinner(self: VHCSpinner) -> None:
                 if expanded_tag is not None:
                     TagProxy(expanded_tag).set_value(expanded)
 
-        def vhc_set_values(normal: bool, expanded: bool) -> None:
+        def vhc_set_values(_0: bool, _1: bool) -> None:
             # TagProxy(Tag.VHC_Enabler).set_value(normal)
             # TagProxy(Tag.VHC_Expanded_Enabler).set_value(expanded)
-            _cascade_option_values(self)
+            sync_options_with_proxies()
             refresh_last_drawn_options()
 
         if btn.name == "All Off":

@@ -1,3 +1,5 @@
+from unrealsdk import logging
+from typing import Tuple
 from mods_base.options import BoolOption, SpinnerOption, SliderOption
 
 from ..mapping.object_proxy import Tag, TagProxy
@@ -19,13 +21,13 @@ __all__ = [
 
 # noinspection PyArgumentList
 class TagToggleOption(BoolOption):
-    _tag: TagProxy
+    proxy: TagProxy
 
     def __init__(self, identifier: str, tag: Tag, **kwargs):
-        self._tag = TagProxy(tag)
+        self.proxy = TagProxy(tag)
 
         if "value" not in kwargs:
-            kwargs["value"] = bool(self._tag.value(allow_default=True))
+            kwargs["value"] = bool(self.proxy.default_value())
 
         if "on_change" not in kwargs:
             kwargs["on_change"] = self._on_change
@@ -34,10 +36,14 @@ class TagToggleOption(BoolOption):
 
     @staticmethod
     def _on_change(self: "TagToggleOption", val: bool) -> None:
-        self._tag.set_value(val)
+        self.proxy.set_value(val)
 
-    def fetch_proxy_value(self) -> None:
-        object.__setattr__(self, "value", bool(self._tag.value(allow_default=True)))
+    def sync_with_proxy(self) -> None:
+        object.__setattr__(self, "value", bool(self.proxy.value(allow_default=True)))
+
+    def sync_proxy(self) -> None:
+        if not self.proxy.set_value(self.value):
+            logging.dev_warning(f"Failed to update tag: '{self.proxy.tag.name}'")
 
 
 ################################################################################
@@ -63,45 +69,60 @@ class VHCSpinner(SpinnerOption):
             kwargs["on_change"] = self._on_change
 
         if "value" not in kwargs:
-            kwargs["value"] = self.get_str_value_from_proxy()
+            kwargs["value"] = self.get_str_value_from_proxy(use_proxy_value=False)
 
         super().__init__(identifier=identifier, **kwargs)
 
     def set_normal(self, val: bool) -> None:
-        self._normal_tag.set_value(val)
+        if not self._normal_tag.set_value(val):
+            logging.dev_warning(f"Failed to update tag: '{self._normal_tag.tag.name}'")
 
     def set_expanded(self, val: bool) -> None:
-        if self._expanded_tag:
-            self._expanded_tag.set_value(val)
+        if self._expanded_tag and not self._expanded_tag.set_value(val):
+            logging.dev_warning(f"Failed to update tag: '{self._expanded_tag.tag.name}'")
+
+    def get_value_state(self, value: str | None = None) -> Tuple[bool, bool]:
+        if value is None:
+            value = self.value
+
+        if value == 'Expanded':
+            return True, True
+        elif value == 'Normal':
+            return True, False
+        elif value == 'Off':
+            return False, False
+        else:
+            raise ValueError(f"Invalid value: {value}")
 
     @staticmethod
     def _on_change(self: "VHCSpinner", val: str) -> None:
+        normal, expanded = self.get_value_state(val)
+        self.set_normal(normal)
+        self.set_expanded(expanded)
 
-        if val == "Off":
-            self.set_normal(False)
-            self.set_expanded(False)
+    def get_str_value_from_proxy(self, use_proxy_value=True) -> str:
 
-        elif val == "Normal":
-            self.set_normal(True)
-            self.set_expanded(False)
-            # TagProxy(Tag.VHC_Enabler).set_value(True)
+        if use_proxy_value:
+            is_normal: bool = bool(self._normal_tag.value())
+            is_expanded: bool = self._expanded_tag and bool(self._expanded_tag.value())
+        else:
+            is_normal: bool = bool(self._normal_tag.default_value())
+            is_expanded: bool = self._expanded_tag and bool(self._expanded_tag.default_value())
 
-        elif val == "Expanded":
-            self.set_normal(True)
-            self.set_expanded(True)
-            # TagProxy(Tag.VHC_Enabler).set_value(True)
-            # TagProxy(Tag.VHC_Expanded_Enabler).set_value(True)
-
-    def get_str_value_from_proxy(self) -> str:
-        if self._expanded_tag and bool(self._expanded_tag.value(allow_default=True)):
+        if is_expanded:
             return "Expanded"
-        elif bool(self._normal_tag.value(allow_default=True)):
+        elif is_normal:
             return "Normal"
         else:
             return "Off"
 
-    def fetch_proxy_value(self) -> None:
+    def sync_with_proxy(self) -> None:
         object.__setattr__(self, "value", self.get_str_value_from_proxy())
+
+    def sync_proxy(self) -> None:
+        normal, expanded = self.get_value_state()
+        self.set_normal(normal)
+        self.set_expanded(expanded)
 
 
 ################################################################################
@@ -132,7 +153,7 @@ class RaritySlider(SliderOption):
             kwargs["is_integer"] = False
 
         if "value" not in kwargs:
-            val = float(self.tag.value(allow_default=True))
+            val = float(self.tag.default_value())
 
             # Default values is 150% not 1.5x
             if is_scalar:
@@ -152,11 +173,6 @@ class RaritySlider(SliderOption):
         else:
             self.tag.set_value(val)
 
-    def fetch_proxy_value(self) -> None:
-        if val := self.tag.value():
-            clamped = val if not self.is_scalar else val / 100.0
-            object.__setattr__(self, "value", clamped)
-
     def create_format_label(self) -> str:
         if self.is_integer:
             value_text = f"{self.value:d}{self.value_suffix}"
@@ -164,3 +180,15 @@ class RaritySlider(SliderOption):
             value_text = f"{self.value:.2f}{self.value_suffix}"
 
         return f'{self.identifier}: {value_text}'
+
+    def sync_with_proxy(self) -> None:
+        val = self.tag.value()
+        object.__setattr__(self, "value", val if not self.is_scalar else val / 100.0)
+
+    def sync_proxy(self) -> None:
+        if self.is_scalar:
+            if not self.tag.set_value(self.value * 100.0):
+                logging.dev_warning(f"Failed to update tag: '{self.tag.tag.name}'")
+        else:
+            if not self.tag.set_value(self.value):
+                logging.dev_warning(f"Failed to update tag: '{self.tag.tag.name}'")
