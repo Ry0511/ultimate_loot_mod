@@ -140,10 +140,6 @@ class TagProxy:
                 # for all ADT_Int attributes
                 self.force_int_to_float()
 
-                # On the first load of the object grab whatever its current value is and store it.
-                if val := self.value():
-                    self.set_default_value(val)
-
                 return True
             except ValueError:
                 logging.warning(f"Failed to load object {self.path()}")

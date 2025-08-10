@@ -36,6 +36,11 @@ if not components.has_ewo:
 
 load_all_objects()
 
+# Update default value configuration
+for tag in Tag:
+    proxy = TagProxy(tag)
+    proxy.set_default_value(proxy.value(allow_default=True))
+
 
 @command("ulm_dump_cfg")
 def ulm_dump_cfg(*_) -> None:
