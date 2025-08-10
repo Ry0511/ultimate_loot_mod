@@ -16,8 +16,6 @@ __all__ = [
 def auto_tag_all_options(mod: Mod, options: Sequence[BaseOption]) -> None:
     base_index = 0
 
-    from willow1_mod_menu.options import ModOptionPopulator
-
     if mod.description is not None:
         base_index += 1
 
