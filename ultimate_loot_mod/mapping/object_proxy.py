@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from unrealsdk import load_package, find_object, logging
+from unrealsdk import find_class, logging
 from unrealsdk.unreal import UObject
 
 from mods_base import ObjectFlags  # noqa
@@ -42,16 +42,7 @@ def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
 
 
 def load_all_objects() -> bool:
-    # TODO: This can cause a crash at startup. Unsure why but I would assume it is just too early
-    #  to try and load a package. We don't need to load the package immediately, but it does
-    #  guarantee all objects are loaded which simplifies things. I am moderately curious if using
-    #  StaticLoadObject could avoid the crash here.
-
-    load_package("UltimateLoot_Attributes_TEST")
-    load_package("UltimateLoot_Lootables_TEST")
-
     no_errors = True
-
     for tag in Tag:
         proxy = TagProxy(tag)
         if not proxy.try_load_object():
@@ -132,8 +123,16 @@ class TagProxy:
     def try_load_object(self) -> bool:
         if LOADED_OBJECT_MAPPING[self.tag] is None:
             try:
-                LOADED_OBJECT_MAPPING[self.tag] = find_object(self.class_type(), self.path())
-                LOADED_OBJECT_MAPPING[self.tag].ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
+                # Lazy load the object and keep it alive
+                cdo = find_class('Core.Object').ClassDefaultObject
+                attr_class = find_class(self.class_type())
+                obj = cdo.DynamicLoadObject(self.path(), attr_class, False)
+                LOADED_OBJECT_MAPPING[self.tag] = obj
+                obj.ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
+
+                # This requires the object to be loaded and in memory
+                # LOADED_OBJECT_MAPPING[self.tag] = find_object(self.class_type(), self.path())
+                # LOADED_OBJECT_MAPPING[self.tag].ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
 
                 # Seems a few of the attributes use ADT_Int when they want fractional numbers.
                 # Since it is stored as a float anyway we might as well just enforce it globally
