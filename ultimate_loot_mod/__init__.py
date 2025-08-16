@@ -8,6 +8,7 @@ from mods_base import build_mod, command
 from .mapping.object_proxy import Tag, load_all_objects, TagProxy
 from .options.option_list import create_option_list
 from .ui_edits import auto_tag_all_options
+from .hooks import *
 
 from .ultimate_loot_mod import UltimateLootMod, InstalledComponents, the_mod
 
@@ -39,7 +40,12 @@ load_all_objects()
 # Update default value configuration
 for tag in Tag:
     proxy = TagProxy(tag)
-    proxy.set_default_value(proxy.value(allow_default=True))
+
+    # Manually disable these
+    if tag in (Tag.VHC_Enabler, Tag.VHC_Expanded_Enabler):
+        proxy.set_default_value(False)
+    else:
+        proxy.set_default_value(proxy.value(allow_default=True))
 
 
 @command("ulm_dump_cfg")
@@ -57,6 +63,7 @@ build_mod(
     cls=UltimateLootMod,
     options=create_option_list(),
     commands=[ulm_dump_cfg],
+    hooks=[hook_sync_options_state],
     on_enable=_on_enable,
     on_disable=_on_disable,
     auto_enable=components.has_ulm,
@@ -69,5 +76,7 @@ auto_tag_all_options(the_mod(), the_mod().options)
 for tag in Tag:
     proxy = TagProxy(tag)
     proxy.set_first_load_value(proxy.value(allow_default=True))
+
+import ultimate_loot_mod.mission_rewards  # noqa
 
 logging.info(f"Successfully loaded {the_mod().name} v{the_mod().version}")
