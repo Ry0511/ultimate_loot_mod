@@ -5,7 +5,7 @@ import ultimate_loot_mod.ui_edits  # noqa
 from unrealsdk import logging
 from mods_base import build_mod, command
 
-from .mapping.object_proxy import Tag, load_all_objects, TagProxy
+from .mapping.object_proxy import Tag, load_all_objects, save_first_load_values, TagProxy
 from .options.option_list import create_option_list
 from .ui_edits import auto_tag_all_options
 from .hooks import *
@@ -37,17 +37,6 @@ if not components.has_ewo:
 
 load_all_objects()
 
-# Update default value configuration
-for tag in Tag:
-    proxy = TagProxy(tag)
-
-    # Manually disable these
-    if tag in (Tag.VHC_Enabler, Tag.VHC_Expanded_Enabler):
-        proxy.set_default_value(False)
-    else:
-        proxy.set_default_value(proxy.value(allow_default=True))
-
-
 @command("ulm_dump_cfg")
 def ulm_dump_cfg(*_) -> None:
     for tag in Tag:
@@ -70,12 +59,7 @@ build_mod(
 )
 
 auto_tag_all_options(the_mod(), the_mod().options)
-
-# Right after build_mod it will load the settings file and then those values would've been applied
-# to the proxies grab those values and store them separately to enable restoring them.
-for tag in Tag:
-    proxy = TagProxy(tag)
-    proxy.set_first_load_value(proxy.value(allow_default=True))
+save_first_load_values()
 
 import ultimate_loot_mod.mission_rewards  # noqa
 

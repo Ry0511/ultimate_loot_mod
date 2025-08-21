@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from unrealsdk import find_class, logging
+from unrealsdk import logging
 from unrealsdk.unreal import UObject
 
 from mods_base import ObjectFlags  # noqa
@@ -8,6 +8,7 @@ from mods_base import ObjectFlags  # noqa
 from .attribute_types import *
 from .internal_object_list import Tag
 from .internal_object_mappings import *
+from ..utils import dynamic_load_object
 
 __all__ = [
     "AttributeDataType",
@@ -16,7 +17,11 @@ __all__ = [
     "get_constant_value",
     "set_constant_value",
     "load_all_objects",
+    "save_first_load_values",
 ]
+
+_defaults_loaded: bool = False
+_first_loaded_values_saved: bool = False
 
 
 ################################################################################
@@ -42,12 +47,18 @@ def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
 
 
 def load_all_objects() -> bool:
+    global _defaults_loaded
+
     no_errors = True
     for tag in Tag:
         proxy = TagProxy(tag)
         if not proxy.try_load_object():
             no_errors = False
             logging.dev_warning(f"Failed to load {tag.name}")
+        elif not _defaults_loaded:
+            proxy.set_default_value(proxy.value(allow_default=True))
+
+    _defaults_loaded = True
 
     if not no_errors:
         logging.warning(
@@ -56,6 +67,19 @@ def load_all_objects() -> bool:
         )
 
     return no_errors
+
+
+def save_first_load_values() -> None:
+    global _first_loaded_values_saved
+    if _first_loaded_values_saved:
+        return
+
+    _first_loaded_values_saved = True
+
+    for tag in Tag:
+        proxy = TagProxy(tag)
+        if proxy.is_loaded():
+            proxy.set_first_load_value(proxy.value(allow_default=True))
 
 
 ################################################################################
@@ -124,15 +148,9 @@ class TagProxy:
         if LOADED_OBJECT_MAPPING[self.tag] is None:
             try:
                 # Lazy load the object and keep it alive
-                cdo = find_class('Core.Object').ClassDefaultObject
-                attr_class = find_class(self.class_type())
-                obj = cdo.DynamicLoadObject(self.path(), attr_class, False)
+                obj = dynamic_load_object(self.class_type(), self.path())
                 LOADED_OBJECT_MAPPING[self.tag] = obj
                 obj.ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
-
-                # This requires the object to be loaded and in memory
-                # LOADED_OBJECT_MAPPING[self.tag] = find_object(self.class_type(), self.path())
-                # LOADED_OBJECT_MAPPING[self.tag].ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
 
                 # Seems a few of the attributes use ADT_Int when they want fractional numbers.
                 # Since it is stored as a float anyway we might as well just enforce it globally

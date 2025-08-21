@@ -56,3 +56,4 @@ class UltimateLootMod(Mod):
         UltimateLootMod._instance = self
         super().__init__(*args, **kwargs)
         self.is_enabled = True
+        self.auto_enable = True
