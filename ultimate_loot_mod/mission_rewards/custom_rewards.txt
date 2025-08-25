@@ -31,6 +31,12 @@
 #
 #   [2,3,4] Are all case-insensitive
 #
+# Two console commands exist to assist in testing:
+#   1. `reload_rewards` which will reload the reward file
+#   2. `cheat_missions` which when called will force every missions state to be ready to turn in;
+#       except story missions which it will mark as completed. This will mess with your savefile so
+#       make it readonly if you don't want it to mess with things.
+#
 
 ####################################################################################################
 # Overriding generically each reward item for a mission and redirecting it to something else
