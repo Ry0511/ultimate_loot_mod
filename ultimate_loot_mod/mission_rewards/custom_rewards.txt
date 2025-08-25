@@ -1,0 +1,63 @@
+#
+# Expecting a comma separated list of arguments:
+#   [0] override_path       - The path to the mission or mission reward to override
+#   [1] reward_path         - The path to the custom mission reward
+#   [2] is_loot_pool_reward - Is the reward an ItemPoolDefinition or an InventoryBalanceDefinition?
+#   [3] is_mission_override - Is this reward overriding the mission or a generic reward?
+#   [4] zippy               - The type of item the reward is required to produce it should be a comma
+#                             separated list of 0 or more elements.
+#                             Valid values are: All, ClassMod, Revolver, AssaultRifle, Shield, Shotgun,
+#                                               GrenadeMod, Launcher, Sniper, Repeater, SMG, Eridian
+#
+# Processing of arguments 2, 3, 4, ..., N assumes the following:
+#   first found bool true/false value is is_loot_pool_reward
+#   second found bool true/false value is is_mission_override
+#   anything else is one of any zippy type
+#
+# NOTES
+#   [0] Is either an absolute path to a MissionDefinition or an InventoryBalanceDefinition where
+#       said balance definition is the reward for a mission. If a mission override exists then that
+#       takes priority for that specific mission.
+#
+#   [1] The reward can be either an ItemPoolDefinition or an InventoryBalanceDefinition the latter
+#       is kinda redundant as thats what the mission gives anyway. If a loot pool is provided then
+#       an item will be spawned from the loot pool and the InventoryBalanceDefinition will be passed
+#       forward (this allows it to respect the normal loot pool spawning process). Additionally, if
+#       a zippy is provided then we will spawn items from the loot pool until we get an item that
+#       matches one of the zippy types provided.
+#
+#   [2,3] These are not required to be provided; if they are provided they are taken as is, if they
+#         are not provided then it will attempt to auto-detect.
+#
+#   [2,3,4] Are all case-insensitive
+#
+
+####################################################################################################
+# Overriding generically each reward item for a mission and redirecting it to something else
+#
+
+gd_customweapons.Reward_Weapons.CustomWeap_reward_PatrolSMG, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_SMGs_All, SMG, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_CombatRifle, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Rifles_All, AssaultRifle, Eridian
+gd_customitems.Items.CustomItem_reward_shield, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Items_Shields, Shield, Eridian
+gd_itemgrades.Gear.ItemGrade_Gear_GrenadeMODs, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Items_Grenademods, True, False, GrenadeMod, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_SemiAutoSniperRifle, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Snipers, True, False, Sniper
+gd_customweapons.Reward_Weapons.CustomWeap_reward_Launcher_Rocket, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Launchers, True, False, Launcher
+gd_customweapons.Reward_Weapons.CustomWeap_reward_SniperRifle, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Snipers, True, False, Sniper, Eridian
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Roland, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Roland, True, False, ClassMod
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Mordecai, True, False, ClassMod
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Lilith, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Lilith, True, False, ClassMod
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Brick, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Brick, True, False, ClassMod
+gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Mordecai, True, False, ClassMod
+gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Lilith, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Lilith, True, False, ClassMod
+gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Brick, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Brick, True, False, ClassMod
+gd_customweapons.Reward_Weapons.CustomWeap_reward_RevolverPistol, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Pistols, True, False, Revolver, Eridian
+
+# TODO: This needs to be an eridian pool
+dlc3_gd_customweapons.Eridan_Weapons.CustomWeap_Eridan_RifleGun, UltimateLoot_Pools_TEST.WeaponPools.EWO.RedChest.Weapons_EWO_RedChest_Rifles, True, False, Eridian
+
+# Need a custom pool or item definition for these as they don't seem to be changed
+# gd_customweapons.Weapons.CustomWeap_CombatShotgun_TKsWave, ?, True, False, Shotgun
+# gd_customweapons.Retail_Weapons.CustomWeap_CombatShotgun_Blister, ?, True, False, Shotgun
+# gd_customweapons.Retail_Weapons.CustomWeap_SMG_TheSpy, ?, True, False, ClassMod
+# gd_customweapons.Retail_Weapons.CustomWeap_RocketLauncher_Leviathan, ?, True, False, GrenadeMod
+# dlc3_gd_customweapons.Unique_Weapons.CustomWeap_Repeater_AthenasWisdom, ?, True, False, Shield

@@ -1,7 +1,7 @@
 from functools import cache
 from pathlib import Path
 
-from mods_base import Mod, SETTINGS_DIR
+from mods_base import Library, SETTINGS_DIR
 
 __all__ = ["UltimateLootMod", "InstalledComponents", "the_mod"]
 
@@ -49,11 +49,10 @@ class InstalledComponents:
         self.has_ewo = sum(1 for _ in path.rglob('*Eridian_Weapons_Overhaul*', case_sensitive=False)) > 0
 
 
-class UltimateLootMod(Mod):
+class UltimateLootMod(Library):
     _instance: "UltimateLootMod" = None
 
     def __init__(self, *args, **kwargs):
         UltimateLootMod._instance = self
         super().__init__(*args, **kwargs)
         self.is_enabled = True
-        self.auto_enable = True

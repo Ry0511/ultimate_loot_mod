@@ -13,7 +13,7 @@ __all__ = [
     "dynamic_load_object",
 ]
 
-_obj_class: UClass | None = None
+_core_obj_class: UClass | None = None
 
 
 @runtime_checkable
@@ -43,25 +43,31 @@ def sync_proxies_with_options() -> None:
             opt.sync_proxy()
 
 
-def dynamic_load_object(obj_class: str | UClass, obj_name: str, may_fail: bool = False) -> UObject:
-    global _obj_class
+def dynamic_load_object(
+    in_obj_class: str | UClass,
+    obj_name: str,
+    may_fail: bool = True,
+    no_throw: bool = False
+) -> UObject | None:
+    global _core_obj_class
 
-    if _obj_class is None:
-        _obj_class = find_class('Core.Object')
+    # Could also just use the class we load later...
+    if _core_obj_class is None:
+        _core_obj_class = find_class('Core.Object')
 
     found_cls: UClass
 
     # Get the objects class
-    if isinstance(obj_class, str):
-        found_cls = find_class(obj_class)
+    if isinstance(in_obj_class, str):
+        found_cls = find_class(in_obj_class)
     else:
-        found_cls = obj_class
+        found_cls = in_obj_class
 
     # Attempt to load the object
-    obj: UObject = _obj_class.ClassDefaultObject.DynamicLoadObject(obj_name, found_cls, may_fail)
+    obj: UObject = _core_obj_class.ClassDefaultObject.DynamicLoadObject(obj_name, found_cls, may_fail)
 
     # Assume this can only happen if may_fail is True?
-    if obj is None:
-        raise ValueError(f"Failed to load object '{obj_name}' of class '{obj_class}'")
+    if obj is None and not no_throw:
+        raise ValueError(f"Failed to load object '{obj_name}' of class '{in_obj_class}'")
 
     return obj
