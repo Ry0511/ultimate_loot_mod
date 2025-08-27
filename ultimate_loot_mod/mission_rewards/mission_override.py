@@ -43,6 +43,9 @@ class ZippyType(Enum):
     Repeater = 'Repeater'
     SMG = 'SMG'
     Eridian = 'Eridian'
+    EWOGrenadeMod = 'eridian_grenade'
+    EWOShield = 'eridian_shield'
+    Artifact = 'elemental'
 
     def __repr__(self) -> str:
         return self.name

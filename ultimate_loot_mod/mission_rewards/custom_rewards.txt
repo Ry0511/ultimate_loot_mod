@@ -38,32 +38,55 @@
 #       make it readonly if you don't want it to mess with things.
 #
 
+
 ####################################################################################################
 # Overriding generically each reward item for a mission and redirecting it to something else
 #
 
-gd_customweapons.Reward_Weapons.CustomWeap_reward_PatrolSMG, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_SMGs_All, SMG, Eridian
-gd_customweapons.Reward_Weapons.CustomWeap_reward_CombatRifle, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Rifles_All, AssaultRifle, Eridian
-gd_customitems.Items.CustomItem_reward_shield, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Items_Shields, Shield, Eridian
-gd_itemgrades.Gear.ItemGrade_Gear_GrenadeMODs, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Items_Grenademods, True, False, GrenadeMod, Eridian
-gd_customweapons.Reward_Weapons.CustomWeap_reward_SemiAutoSniperRifle, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Snipers, True, False, Sniper
-gd_customweapons.Reward_Weapons.CustomWeap_reward_Launcher_Rocket, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Launchers, True, False, Launcher
-gd_customweapons.Reward_Weapons.CustomWeap_reward_SniperRifle, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Snipers, True, False, Sniper, Eridian
-gd_customitems.Items.CustomItem_StarterGear_ComDeck_Roland, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Roland, True, False, ClassMod
-gd_customitems.Items.CustomItem_StarterGear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Mordecai, True, False, ClassMod
-gd_customitems.Items.CustomItem_StarterGear_ComDeck_Lilith, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Lilith, True, False, ClassMod
-gd_customitems.Items.CustomItem_StarterGear_ComDeck_Brick, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Brick, True, False, ClassMod
-gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Mordecai, True, False, ClassMod
-gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Lilith, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Lilith, True, False, ClassMod
-gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Brick, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Classmods_Brick, True, False, ClassMod
-gd_customweapons.Reward_Weapons.CustomWeap_reward_RevolverPistol, UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Pistols, True, False, Revolver, Eridian
+# Base game mission rewards
+gd_customitems.Items.CustomItem_reward_shield, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Items_Shields_All, True, False, Shield, EWOShield
+gd_itemgrades.Gear.ItemGrade_Gear_GrenadeMODs, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_GrenadeMods_All, True, False, GrenadeMod, EWOGrenadeMod, Artifact
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Roland, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Roland, True, False, ClassMod
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Mordecai, True, False, ClassMod
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Lilith, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Lilith, True, False, ClassMod
+gd_customitems.Items.CustomItem_StarterGear_ComDeck_Brick, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Brick, True, False, ClassMod
+gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Mordecai, True, False, ClassMod
+gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Lilith, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Lilith, True, False, ClassMod
+gd_itemgrades.Gear.ItemGrade_Gear_ComDeck_Brick, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Brick, True, False, ClassMod
+gd_customweapons.Reward_Weapons.CustomWeap_reward_AssaultShotgun, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Shotguns_All, Shotgun, True, False, Shotgun, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_CombatRifle, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Rifles_All, AssaultRifle, True, False, AssaultRifle, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_CombatShotgun, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Shotguns_All, True, False, Shotgun, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_Launcher_Rocket, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Launchers, True, False, Launcher, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_MachinePistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols, True, False, Repeater, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_PatrolSMG, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_SMGs_All, True, False, SMG, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_RepeaterPistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols_All, True, False, Repeater, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_RevolverPistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols_All, True, False, Revolver, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_SemiAutoSniperRifle, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Snipers_All, True, False, Sniper, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_SniperRifle, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Snipers_All, True, False, Sniper, Eridian
+gd_customweapons.Reward_Weapons.CustomWeap_reward_SupportMachinegun, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Rifles_All, True, False, AssaultRifle, Eridian
 
-# TODO: This needs to be an eridian pool
-dlc3_gd_customweapons.Eridan_Weapons.CustomWeap_Eridan_RifleGun, UltimateLoot_Pools_TEST.WeaponPools.EWO.RedChest.Weapons_EWO_RedChest_Rifles, True, False, Eridian
+# Base game unique mission rewards
+gd_customweapons.Weapons.CustomWeap_CombatShotgun_TKsWave, gd_itempools.Level50Pools.Scar_TKsWave, True, False, Shotgun
+gd_customweapons.Weapons.CustomWeap_Sniper_ShepsElephantGun, gd_itempools.Level50Pools.SkagZilla_ElephantGun, True, False, Sniper
+gd_customweapons.Retail_Weapons.CustomWeap_CombatRifle_Sentinel, gd_itempools.Level50Pools.Rakkinishu_TheSentinel, True, False, AssaultRifle
+gd_customweapons.Retail_Weapons.CustomWeap_CombatShotgun_Blister, gd_itempools.Level50Pools.MothRakk_Blister, True, False, Shotgun
+gd_customweapons.Retail_Weapons.CustomWeap_repeater_TheDove, gd_itempools.Level50Pools.Slither_TheDove, True, False, Repeater
+gd_customweapons.Retail_Weapons.CustomWeap_Revolver_Patton, gd_itempools.Level50Pools.Queen_Patton, True, False, Revolver
+gd_customweapons.Retail_Weapons.CustomWeap_RocketLauncher_Leviathan, gd_itempools.Level50Pools.RakkHive_Leviathan, True, False, Launcher
+gd_customweapons.Retail_Weapons.CustomWeap_SMG_TheSpy, gd_itempools.Level50Pools.KingWeeWee_TheSpy, True, False, SMG
+gd_customweapons.Retail_Weapons.CustomWeap_Sniper_Nailer, gd_itempools.Level50Pools.Bleeder_Nailer, True, False, Sniper
 
-# Need a custom pool or item definition for these as they don't seem to be changed
-# gd_customweapons.Weapons.CustomWeap_CombatShotgun_TKsWave, ?, True, False, Shotgun
-# gd_customweapons.Retail_Weapons.CustomWeap_CombatShotgun_Blister, ?, True, False, Shotgun
-# gd_customweapons.Retail_Weapons.CustomWeap_SMG_TheSpy, ?, True, False, ClassMod
-# gd_customweapons.Retail_Weapons.CustomWeap_RocketLauncher_Leviathan, ?, True, False, GrenadeMod
-# dlc3_gd_customweapons.Unique_Weapons.CustomWeap_Repeater_AthenasWisdom, ?, True, False, Shield
+# DLC3 mission rewards
+dlc3_gd_customitems.Items.CustomItem_ClassMod_Marine, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Roland, True, False, ClassMod
+dlc3_gd_customitems.Items.CustomItem_ClassMod_Truxican, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Mordecai, True, False, ClassMod
+dlc3_gd_customitems.Items.CustomItem_ClassMod_Specter, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Lilith, True, False, ClassMod
+dlc3_gd_customitems.Items.CustomItem_ClassMod_Ogre, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Brick, True, False, ClassMod
+gd_customweapons.GBX_Weapons.CustomWeap_Gearbox_MachinePistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols, True, False, Revolver, Eridian
+gd_customweapons.GBX_Weapons.CustomWeap_Gearbox_SupportMachinegun, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Snipers, True, False, AssaultRifle, Eridian
+gd_customweapons.GBX_Weapons.CustomWeap_Gearbox_Launcher_Rocket, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Launchers, True, False, Launcher, Eridian
+gd_customweapons.GBX_Weapons.CustomWeap_Gearbox_SMG, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_SMGs_All, SMG, Eridian
+gd_customweapons.GBX_Weapons.CustomWeap_Gearbox_SniperRifle, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Snipers, True, False, Sniper, Eridian
+
+# DLC3 unique mission rewards
+dlc3_gd_customweapons.Eridan_Weapons.CustomWeap_Eridan_RifleGun, UltimateLoot_Pools_TEST.LootablePools.Pool_Athena_Reward_Eridian, True, False, Eridian
+dlc3_gd_customweapons.Unique_Weapons.CustomWeap_Repeater_AthenasWisdom, UltimateLoot_Pools_TEST.LootablePools.Pool_Athena_Reward_AthenasWisdom, True, False, Repeater
