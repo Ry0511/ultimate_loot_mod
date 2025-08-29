@@ -37,7 +37,7 @@ def hook_on_mission_complete(
         logging.dev_warning(f'Illegal reward state')
         return None
 
-    mission_path: str = obj._path_name()
+    mission_path: str = obj._path_name().lower()
 
     # Not sure if this is required considering we just disabled ourself
     with prevent_hooking_direct_calls():
@@ -53,8 +53,10 @@ def hook_on_mission_complete(
             logging.info(f'Mission has no reward "{mission_path}"')
             return Block, None
 
-        if (override := _reward_overrides.get(normal_reward._path_name())) is not None:
-            logging.info(f'Overriding mission reward "{normal_reward._path_name()}"')
+        normal_reward_path = normal_reward._path_name().lower()
+
+        if (override := _reward_overrides.get(normal_reward_path)) is not None:
+            logging.info(f'Overriding mission reward "{normal_reward_path}"')
             return Block, override.get_reward(args.InWPC)
         else:
             return Block, normal_reward

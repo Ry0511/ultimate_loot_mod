@@ -118,7 +118,7 @@ class MissionRewardOverride:
 
         override_path = args.pop(0)
         reward_path = args.pop(0)
-        res = MissionRewardOverride(override_path, reward_path)
+        res = MissionRewardOverride(override_path.lower(), reward_path.lower())
 
         is_mission_override: bool | None = None
         is_loot_pool_reward: bool | None = None
