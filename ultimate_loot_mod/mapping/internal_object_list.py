@@ -58,6 +58,7 @@ class Tag(Enum):
     DropChance_Lootable = auto()
     DropChance_Legendary = auto()
     DropChance_Pearlescent = auto()
+    DropChance_Hybrid = auto()
 
     Multiplier_CrimsonChest_Legendary = auto()
     Multiplier_CrimsonChest_Pearlescent = auto()

@@ -281,6 +281,7 @@ def create_option_list() -> List[BaseOption]:
             NestedOption("> Base Drop Chances", children=[
                 _button_reset_drop_chances,
                 RaritySlider("EWO Items", Tag.DropChance_EWO, step=1.0, value_suffix="%"),
+                RaritySlider("VHC Hybrids", Tag.DropChance_Hybrid, step=0.5, value_suffix="%"),
                 RaritySlider("Lootables", Tag.DropChance_Lootable, step=1.0, value_suffix="%"),
                 RaritySlider("Legendaries", Tag.DropChance_Legendary, step=0.5, value_suffix="%"),
                 RaritySlider("Pearls", Tag.DropChance_Pearlescent, step=0.1, value_suffix="%"),
