@@ -90,3 +90,16 @@ gd_customweapons.GBX_Weapons.CustomWeap_Gearbox_SniperRifle, UltimateLoot_Pools_
 # DLC3 unique mission rewards
 dlc3_gd_customweapons.Eridan_Weapons.CustomWeap_Eridan_RifleGun, UltimateLoot_Pools_TEST.LootablePools.Pool_Athena_Reward_Eridian, True, False, Eridian
 dlc3_gd_customweapons.Unique_Weapons.CustomWeap_Repeater_AthenasWisdom, UltimateLoot_Pools_TEST.LootablePools.Pool_Athena_Reward_AthenasWisdom, True, False, Repeater
+
+# TODO: Reorganise these
+gd_itemgrades.gear.itemgrade_gear_comdeck_roland,UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Roland, True, False, ClassMod
+gd_customitems.items.customitem_startergear_grenademod_mirv, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_GrenadeMods_All, True, False, GrenadeMod, EWOGrenadeMod
+dlc3_gd_customweapons.Unique_Weapons.CustomWeap_Repeater_ChiquitoAmigo, UltimateLoot_Pools_TEST.LootablePools.Pool_ChiquitoAmigo_Reward, True, False, Repeater
+gd_itemgrades.weapons.itemgrade_weapon_combatrifle, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Rifles_All, AssaultRifle, True, False, AssaultRifle, Eridian
+gd_itemgrades.weapons.itemgrade_weapon_sniperrifle, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Snipers_All, True, False, Sniper, Eridian
+gd_itemgrades.weapons.itemgrade_weapon_patrolsmg, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_SMGs_All, SMG, Eridian
+gd_itemgrades.weapons.itemgrade_weapon_combatshotgun, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Shotguns_All, Shotgun, True, False, Shotgun, Eridian
+gd_itemgrades.weapons.itemgrade_weapon_repeaterpistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols_All, True, False, Repeater, Eridian
+gd_itemgrades.weapons.itemgrade_weapon_revolverpistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols_All, True, False, Revolver, Eridian
+gd_itemgrades.weapons.itemgrade_weapon_launcher_rocket, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Launchers, True, False, Launcher, Eridian
+gd_itemgrades.gear.itemgrade_gear_shield, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Items_Shields_All, True, False, Shield, EWOShield
