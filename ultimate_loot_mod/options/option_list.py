@@ -259,10 +259,9 @@ def create_option_list() -> List[BaseOption]:
             "General",
             children=[
                 _button_reset_all,
-                _button_restore_first_load_values,
                 TagToggleOption("Arsenal", Tag.Arsenal_Enabler),
                 TagToggleOption("EWO", Tag.EWO_Enabler),
-                NestedOption("> Vault Hunter Challenges", children=[
+                NestedOption("Vault Hunter Challenges", children=[
                     _vhc_enabler_spinner,
                     TagToggleOption("Randomizer", Tag.VHC_Randomizer_Enabler),
                     GroupedOption("Manufacturers", children=[
@@ -278,23 +277,23 @@ def create_option_list() -> List[BaseOption]:
         ),
         GroupedOption("Drop Rates", children=[
             _button_reset_drop_rates,
-            NestedOption("> Base Drop Chances", children=[
-                _button_reset_drop_chances,
-                RaritySlider("EWO Items", Tag.DropChance_EWO, step=1.0, value_suffix="%"),
+            NestedOption("Base Drop Chances", children=[
+                RaritySlider("EWO Equipment", Tag.DropChance_EWO, step=1.0, value_suffix="%"),
                 RaritySlider("VHC Hybrids", Tag.DropChance_Hybrid, step=0.5, value_suffix="%"),
+                RaritySlider("Enemy Equipment", Tag.DropChance_EnemyEquipment, step=1.0, value_suffix="%"),
                 RaritySlider("Lootables", Tag.DropChance_Lootable, step=1.0, value_suffix="%"),
                 RaritySlider("Legendaries", Tag.DropChance_Legendary, step=0.5, value_suffix="%"),
                 RaritySlider("Pearls", Tag.DropChance_Pearlescent, step=0.1, value_suffix="%"),
             ]),
-            NestedOption("> White Chest Multiplier", children=[
+            NestedOption("White Chest Multiplier", children=[
                 RaritySlider("Legendaries", Tag.Multiplier_WhiteChest_Legendary, is_scalar=True, value_suffix="x"),
                 RaritySlider("Pearls", Tag.Multiplier_WhiteChest_Pearlescent, is_scalar=True, value_suffix="x"),
             ]),
-            NestedOption("> Red Chest Multiplier", children=[
+            NestedOption("Red Chest Multiplier", children=[
                 RaritySlider("Legendaries", Tag.Multiplier_RedChest_Legendary, is_scalar=True, value_suffix="x"),
                 RaritySlider("Pearls", Tag.Multiplier_RedChest_Pearlescent, is_scalar=True, value_suffix="x"),
             ]),
-            NestedOption("> Lance Chest Multiplier", children=[
+            NestedOption("Lance Chest Multiplier", children=[
                 RaritySlider("Legendaries", Tag.Multiplier_CrimsonChest_Legendary, is_scalar=True, value_suffix="x"),
                 RaritySlider("Pearls", Tag.Multiplier_CrimsonChest_Pearlescent, is_scalar=True, value_suffix="x"),
             ])

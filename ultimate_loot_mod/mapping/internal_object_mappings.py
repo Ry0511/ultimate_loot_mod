@@ -53,6 +53,7 @@ OBJECT_PATH_MAPPING: Dict[Tag, str] = {
     Tag.DropChance_Lootable: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Lootable',
     Tag.DropChance_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Pearlescent',
     Tag.DropChance_Hybrid: 'UltimateLoot_Attributes_TEST.Attributes.VHC.DropChance.DropChance_Hybrid',
+    Tag.DropChance_EnemyEquipment: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_EnemyEquipment',
 
     Tag.Multiplier_CrimsonChest_Legendary: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_CrimsonChest_Legendary',
     Tag.Multiplier_CrimsonChest_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_CrimsonChest_Pearlescent',
@@ -89,6 +90,7 @@ BASE_DROP_CHANCES: List[Tag] = [
     Tag.DropChance_Lootable,
     Tag.DropChance_Pearlescent,
     Tag.DropChance_Hybrid,
+    Tag.DropChance_EnemyEquipment,
 ]
 
 CHEST_MULTIPLIERS: List[Tag] = [
@@ -139,6 +141,7 @@ DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
     Tag.DropChance_Legendary: 2.0,
     Tag.DropChance_Pearlescent: 0.1,
     Tag.DropChance_Hybrid: 1.0,
+    Tag.DropChance_EnemyEquipment: 10.0,
     Tag.Multiplier_CrimsonChest_Legendary: 150.0,
     Tag.Multiplier_CrimsonChest_Pearlescent: 100.0,
     Tag.Multiplier_RedChest_Legendary: 100.0,
