@@ -11,6 +11,8 @@ from .internal_options import TagToggleOption, VHCSpinner, RaritySlider
 from ..ui_edits.refresh_options import refresh_last_drawn_options
 from ..utils import sync_options_with_proxies
 
+from .starter_equipment import create_starter_equipment_options
+
 __all__ = [
     "create_option_list",
 ]
@@ -273,6 +275,7 @@ def create_option_list() -> List[BaseOption]:
                 ]),
                 TagToggleOption("Better Health", Tag.BetterHealth_Enabler),
                 TagToggleOption("Pearlescent SDU's", Tag.PearlescentSDUs_Enabler),
+                create_starter_equipment_options(),
             ]
         ),
         GroupedOption("Drop Rates", children=[

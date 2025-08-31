@@ -12,6 +12,8 @@ from .hooks import *
 
 from .ultimate_loot_mod import UltimateLootMod, InstalledComponents, the_mod
 
+import ultimate_loot_mod.options.starter_equipment  # noqa
+
 __version__: Tuple[int, int]
 
 

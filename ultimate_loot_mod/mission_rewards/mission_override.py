@@ -249,10 +249,10 @@ class MissionRewardOverride:
         global spawned_items
 
         cdo: UObject = find_class('WillowGame.ItemPool').ClassDefaultObject
-        res: UObject | None = None
 
         # Bit of an odd choice but if we are given a loot pool that can spawn multiple item
         # types then we are not guaranteed to get the right type of item.
+        # TODO: Revert this change
         for i in range(0, 20):
             # TODO: get current gamestage and awesome level from WPC
             _, items = cdo.SpawnBalancedInventoryFromPool(pool, 69, 200, wpc, [])
@@ -266,9 +266,7 @@ class MissionRewardOverride:
                     return None
 
                 if self.compare_zippy(item_zippy):
-                    res = item.DefinitionData.BalanceDefinition
+                    return item.DefinitionData.BalanceDefinition
 
-            if res is None:
-                logging.error(f'Failed to find \'{self.zippy}\' item in pool \'{self.reward_path}\'')
-
-        return res
+        logging.error(f'Failed to find \'{self.zippy}\' item in pool \'{self.reward_path}\'')
+        return None
