@@ -1,6 +1,7 @@
 from functools import wraps
 from typing import runtime_checkable, Protocol
 
+from unrealsdk import logging
 import willow1_mod_menu as wmm
 from willow1_mod_menu.populators import Populator
 
@@ -17,7 +18,10 @@ class SupportsFormatLabel(Protocol):
 @wraps(Populator.format_slider_label)
 def _format_slider_label(option: SliderOption) -> str:
     if isinstance(option, SupportsFormatLabel):
-        return option.create_format_label()
+        try:
+            return option.create_format_label()
+        except Exception as ex:  # noqa
+            logging.error(f'Failed to create format label for option {option}, error: {ex}')
     return _original_format_slider_label(option)
 
 
