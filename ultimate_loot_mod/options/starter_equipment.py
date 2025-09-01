@@ -19,14 +19,14 @@ from ultimate_loot_mod.mission_rewards.mission_override import create_zippy, Zip
 all_character_starter_equipment: Set["CharacterStarterEquipment"] = set()
 
 WEAPON_MAPPING: Dict[str, Tuple[LiteralString, Tuple[ZippyType, ...] | None]] = {
-    'Any': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_All', None),
-    'Sniper': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Snipers_All', (ZippyType.Sniper, ZippyType.Eridian)),
-    'SMG': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_SMGs_All', (ZippyType.SMG, ZippyType.Eridian)),
-    'Shotgun': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Shotguns_All', (ZippyType.Shotgun, ZippyType.Eridian)),
-    'Assault Rifle': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Rifles_All', (ZippyType.AssaultRifle, ZippyType.Eridian)),
-    'Repeater': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Pistols_All', (ZippyType.Repeater, ZippyType.Eridian)),
-    'Revolver': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Pistols_All', (ZippyType.Revolver, ZippyType.Eridian)),
-    'Rocket Launcher': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Weapons_Launchers_All', (ZippyType.Launcher, ZippyType.Eridian)),
+    'Any': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_All', None),
+    'Sniper': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_Snipers_All', (ZippyType.Sniper, ZippyType.Eridian)),
+    'SMG': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_SMGs_All', (ZippyType.SMG, ZippyType.Eridian)),
+    'Shotgun': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_Shotguns_All', (ZippyType.Shotgun, ZippyType.Eridian)),
+    'Assault Rifle': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_Rifles_All', (ZippyType.AssaultRifle, ZippyType.Eridian)),
+    'Repeater': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_Pistols_All', (ZippyType.Repeater, ZippyType.Eridian)),
+    'Revolver': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_Pistols_All', (ZippyType.Revolver, ZippyType.Eridian)),
+    'Rocket Launcher': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Weapons_Launchers_All', (ZippyType.Launcher, ZippyType.Eridian)),
 }
 
 ITEM_MAPPING: Dict[str, Tuple[LiteralString, Tuple[ZippyType, ...] | None]] = {
@@ -51,6 +51,14 @@ class DefaultProfile(Enum):
     Lilith = 'gd_profiles.default_profile_Lilith'
     Mordecai = 'gd_profiles.default_profile_Mordecai'
     Roland = 'gd_profiles.default_profile_Roland'
+
+
+DEFAULT_WEAPON: Dict[DefaultProfile, str] = {
+    DefaultProfile.Brick: 'Shotgun',
+    DefaultProfile.Lilith: 'SMG',
+    DefaultProfile.Mordecai: 'Sniper',
+    DefaultProfile.Roland: 'Assault Rifle',
+}
 
 
 class EQuickWeaponSlot(Enum):
@@ -126,11 +134,11 @@ class WeaponSpinner(SpinnerOption):
     quick_slot: EQuickWeaponSlot
 
     # noinspection PyArgumentList
-    def __init__(self, indentifier: str, quick_slot: EQuickWeaponSlot) -> None:
+    def __init__(self, indentifier: str, quick_slot: EQuickWeaponSlot, value: str | None = None) -> None:
         self.quick_slot = quick_slot
         super().__init__(
             indentifier,
-            value='None',
+            value='None' if value is None else value,
             choices=[
                 'None',
                 *WEAPON_MAPPING.keys()
@@ -166,8 +174,10 @@ class CharacterStarterEquipment(NestedOption):
 
     # noinspection PyArgumentList
     def __init__(self, profile: DefaultProfile):
+        global DEFAULT_WEAPON
+
         super().__init__(profile.name, children=(
-            WeaponSpinner('Weapon Primary', quick_slot=EQuickWeaponSlot.QuickSelectUp),
+            WeaponSpinner('Weapon Primary', quick_slot=EQuickWeaponSlot.QuickSelectUp, value=DEFAULT_WEAPON.get(profile)),
             WeaponSpinner('Weapon Secondary', quick_slot=EQuickWeaponSlot.QuickSelectDown),
             *(
                 ItemEnabler(item)
