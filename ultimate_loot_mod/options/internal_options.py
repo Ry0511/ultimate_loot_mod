@@ -39,7 +39,7 @@ class TagToggleOption(BoolOption):
         self.proxy.set_value(val)
 
     def sync_with_proxy(self) -> None:
-        object.__setattr__(self, "value", bool(self.proxy.value(allow_default=True)))
+        object.__setattr__(self, "value", bool(self.proxy.value()))
 
     def sync_proxy(self) -> None:
         if not self.proxy.set_value(self.value):

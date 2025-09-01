@@ -56,7 +56,7 @@ def load_all_objects() -> bool:
             no_errors = False
             logging.dev_warning(f"Failed to load {tag.name}")
         elif not _defaults_loaded:
-            proxy.set_default_value(proxy.value(allow_default=True))
+            proxy.set_default_value(proxy.value())
 
     _defaults_loaded = True
 
@@ -79,7 +79,7 @@ def save_first_load_values() -> None:
     for tag in Tag:
         proxy = TagProxy(tag)
         if proxy.is_loaded():
-            proxy.set_first_load_value(proxy.value(allow_default=True))
+            proxy.set_first_load_value(proxy.value())
 
 
 ################################################################################
@@ -115,7 +115,7 @@ class TagProxy:
         self.try_load_object()
         return LOADED_OBJECT_MAPPING[self.tag]
 
-    def value(self, allow_default=False, convert_to_py_type=True) -> AttributeDataType | None:
+    def value(self, allow_default=True, convert_to_py_type=True) -> AttributeDataType | None:
         if not self.try_load_object():
             return self.default_value() if allow_default else None
 
