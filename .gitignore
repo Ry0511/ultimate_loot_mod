@@ -2,6 +2,8 @@ vendor/*.zip
 vendor/*.rar
 .idea
 .vscode
+auto_run
+auto_run/*
 
 **/*.pyc
 **/__pycache__
