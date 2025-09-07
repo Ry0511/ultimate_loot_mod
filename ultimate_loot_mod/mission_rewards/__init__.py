@@ -74,64 +74,64 @@ def hook_on_grant_mission_reward_post(*_) -> None:
         _cheat_missions(None)  # noqa
 
 
-hook_on_mission_complete.disable()
-hook_on_grant_mission_reward_pre.enable()
-hook_on_grant_mission_reward_post.enable()
+# hook_on_mission_complete.disable()
+# hook_on_grant_mission_reward_pre.enable()
+# hook_on_grant_mission_reward_post.enable()
 
 ################################################################################
 # | REMOVE EVENTUALLY |
 ################################################################################
 
-
-from mods_base import command, get_pc
-
-
-@command('cheat_missions')
-def _cheat_missions(*_) -> None:
-    from dataclasses import dataclass
-    from ultimate_loot_mod.utils import dynamic_load_object
-
-    global _toggle_cheat_missions
-    _toggle_cheat_missions = True
-
-    wpc: UObject = get_pc()
+if False:
+    from mods_base import command, get_pc
 
 
-    @dataclass
-    class Proxy:
-        MissionDef: UObject
-        Status: int
+    @command('cheat_missions')
+    def _cheat_missions(*_) -> None:
+        from dataclasses import dataclass
+        from ultimate_loot_mod.utils import dynamic_load_object
+
+        global _toggle_cheat_missions
+        _toggle_cheat_missions = True
+
+        wpc: UObject = get_pc()
 
 
-    def all_missions() -> Iterable[UObject | Proxy]:
-        play_index = wpc.GetCurrentPlaythrough()
-        yield from wpc.MissionPlaythroughData[play_index].MissionList
-
-        for dlc_mission in wpc.MissionPlaythroughData[play_index].UnloadableDlcMissionList:
-            yield Proxy(
-                MissionDef=dynamic_load_object('MissionDefinition', dlc_mission.MissionDefName),
-                Status=-1
-            )
-
-    for m in all_missions():
-
-        if m is None or m.MissionDef is None or m.Status == -1:
-            continue
-
-        if m.MissionDef.bPlotCritical:
-            m.Status = 4  # Completed
-        else:
-            m.Status = 2  # Ready to turn in
+        @dataclass
+        class Proxy:
+            MissionDef: UObject
+            Status: int
 
 
-_cheat_missions.enable()
+        def all_missions() -> Iterable[UObject | Proxy]:
+            play_index = wpc.GetCurrentPlaythrough()
+            yield from wpc.MissionPlaythroughData[play_index].MissionList
+
+            for dlc_mission in wpc.MissionPlaythroughData[play_index].UnloadableDlcMissionList:
+                yield Proxy(
+                    MissionDef=dynamic_load_object('MissionDefinition', dlc_mission.MissionDefName),
+                    Status=-1
+                )
+
+        for m in all_missions():
+
+            if m is None or m.MissionDef is None or m.Status == -1:
+                continue
+
+            if m.MissionDef.bPlotCritical:
+                m.Status = 4  # Completed
+            else:
+                m.Status = 2  # Ready to turn in
 
 
-@command('reload_rewards')
-def _reload_reward_overrides(*_) -> None:
-    global _reward_overrides
-    mission_overrides: List[MissionRewardOverride] = load_mission_reward_overrides()
-    _reward_overrides = {m.override_path: m for m in mission_overrides}
+    _cheat_missions.enable()
 
 
-_reload_reward_overrides.enable()
+    @command('reload_rewards')
+    def _reload_reward_overrides(*_) -> None:
+        global _reward_overrides
+        mission_overrides: List[MissionRewardOverride] = load_mission_reward_overrides()
+        _reward_overrides = {m.override_path: m for m in mission_overrides}
+
+
+    _reload_reward_overrides.enable()
