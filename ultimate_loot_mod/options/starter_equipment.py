@@ -6,6 +6,7 @@ from mods_base import (
     NestedOption,
     BoolOption,
     SpinnerOption,
+    ButtonOption,
     hook,
     get_pc,
     ObjectFlags,  # noqa
@@ -15,6 +16,8 @@ from unrealsdk.unreal import UObject, WeakPointer, WrappedArray, WrappedStruct
 
 from ultimate_loot_mod.utils import dynamic_load_object
 from ultimate_loot_mod.mission_rewards.mission_override import create_zippy, ZippyType
+
+from ui_utils import TrainingBox
 
 all_character_starter_equipment: Set["CharacterStarterEquipment"] = set()
 
@@ -70,7 +73,7 @@ class EQuickWeaponSlot(Enum):
     EQuickWeaponSlot_MAX = 5
 
 
-def _get_item_from_loot_pool(pool: UObject, expected_zippy: Tuple[ZippyType] | None = None, game_stage: int = 1) -> UObject | None:
+def _get_item_from_loot_pool(pool: UObject, game_stage: int, expected_zippy: Tuple[ZippyType] | None = None) -> UObject | None:
     cdo: UObject = find_class('WillowGame.ItemPool').ClassDefaultObject
 
     # Bit of an odd choice but if we are given a loot pool that can spawn multiple item
@@ -116,9 +119,11 @@ class ItemEnabler(BoolOption):
             logging.error(f'Failed to load loot pool "{loot_pool_path}"')
             return None
 
-        item = _get_item_from_loot_pool(loot_pool, zippy, 3 if self.identifier == 'Shield' else 8)
+        # Since level restrictions apply we may not get any item depending on mod configuration
+        gamestage: int = 3 if self.identifier == 'Shield' else 8
+        item: UObject | None = _get_item_from_loot_pool(loot_pool, gamestage, zippy)
 
-        if item is None:
+        if item is None and (item := _get_item_from_loot_pool(loot_pool, gamestage + 2, zippy)) is None:
             logging.error(f'Failed to find \'{self.identifier}\' item in pool \'{loot_pool_path}\'')
             return None
 
@@ -157,11 +162,20 @@ class WeaponSpinner(SpinnerOption):
             logging.error(f'Failed to load loot pool "{loot_pool_path}"')
             return None
 
+        # Since level restrictions apply we may not get any item depending on mod configuration
+        gamestage: int = 1
+        item: UObject | None = _get_item_from_loot_pool(loot_pool, gamestage, zippy)
+
+        # Failed to find any suitable items
+        if item is None and (item := _get_item_from_loot_pool(loot_pool, gamestage + 4, zippy)) is None:
+            logging.error(f'Failed to find \'{self.value}\' item in pool \'{loot_pool_path}\'')
+            return None
+
         return make_struct(
             'WeaponProfileData',
             StoredAmmo=0,
             QuickSlot=int(self.quick_slot.value),
-            WeaponDefinitionData=_get_item_from_loot_pool(loot_pool, zippy),
+            WeaponDefinitionData=item
         )
 
 
@@ -250,6 +264,21 @@ def create_starter_equipment_options() -> NestedOption:
         "Starter Equipment",
         children=[
             BoolOption('Enabled', value=False),
+            ButtonOption('> Help <', on_press=lambda _0: (
+                TrainingBox(
+                    title='Help',
+                    message='This customizes the starter equipment for each character, overriding'
+                            ' the defaults with what is specified here. This change only takes effect'
+                            ' for new characters created using the character selection screen'
+                            ' (the movie where you select one of the four Vault Hunters).\n\n'
+                            'Note that the items here are subject to normal loot spawning rules, and'
+                            ' if no suitable item can be found, you may not receive any items or weapons.'
+                            ' Since the items follow the normal loot spawning process,'
+                            ' which VHC modifies extensively, it is also subject to those changes'
+                            ' - for example, Randomiser and VHC Expanded which removes certain item'
+                            ' restrictions such as level and part combinations.',
+                ).show()
+            )),
             *(
                 CharacterStarterEquipment(profile)
                 for profile in DefaultProfile
