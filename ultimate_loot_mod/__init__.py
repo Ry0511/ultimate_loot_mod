@@ -3,7 +3,7 @@ from typing import Tuple
 import ultimate_loot_mod.ui_edits  # noqa
 
 from unrealsdk import logging
-from mods_base import build_mod, command
+from mods_base import build_mod
 
 from .mapping.object_proxy import Tag, load_all_objects, save_first_load_values, TagProxy
 from .options.option_list import create_option_list
@@ -27,33 +27,14 @@ def _on_disable() -> None:
 
 
 components = InstalledComponents()
-
-if not components.has_ulm:
-    logging.warning("Could not detect UltimateLoot Mod files; The mod may not function correctly!")
-
-if not components.has_arsenal:
-    logging.warning("Could not detect Arsenal mod files!")
-
-if not components.has_ewo:
-    logging.warning("Could not detect EWO mod files!")
+if components.missing_components():
+    logging.info("Some Ultimate Loot Mod components are missing")
 
 load_all_objects()
-
-@command("ulm_dump_cfg")
-def ulm_dump_cfg(*_) -> None:
-    for tag in Tag:
-        proxy = TagProxy(tag)
-        value = f'{proxy.value(convert_to_py_type=False):.9f}'
-        padding = max(3 - len(value.split(".")[0]), 0)
-        print(f"{tag.name:>40} | {' ' * padding}{value} | {proxy.value()}")
-
-
-ulm_dump_cfg.enable()
 
 build_mod(
     cls=UltimateLootMod,
     options=create_option_list(),
-    commands=[ulm_dump_cfg],
     hooks=[hook_sync_options_state],
     on_enable=_on_enable,
     on_disable=_on_disable,

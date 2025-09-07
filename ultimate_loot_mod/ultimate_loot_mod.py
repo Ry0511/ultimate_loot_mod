@@ -33,6 +33,9 @@ class InstalledComponents:
 
         return borderlands_dir
 
+    def missing_components(self) -> bool:
+        return not all((self.has_arsenal, self.has_ewo, self.has_ulm))
+
     def _check_for_ulm_files(self) -> None:
         if not (path := self.find_borderlands_dir()):
             return
