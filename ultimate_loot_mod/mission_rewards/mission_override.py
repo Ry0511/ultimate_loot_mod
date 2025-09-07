@@ -263,10 +263,13 @@ class MissionRewardOverride:
 
         # Bit of an odd choice but if we are given a loot pool that can spawn multiple item
         # types then we are not guaranteed to get the right type of item.
-        # TODO: Revert this change
+
+        gamestage: int = wpc.Pawn.GetGamestage()
+        awesome_level: int = wpc.Pawn.GetAwesomeLevel()
+        logging.misc(f'Gamestage={gamestage}, AwesomeLevel={awesome_level}')
+
         for i in range(0, 20):
-            # TODO: get current gamestage and awesome level from WPC
-            _, items = cdo.SpawnBalancedInventoryFromPool(pool, 69, 200, wpc, [])
+            _, items = cdo.SpawnBalancedInventoryFromPool(pool, gamestage, awesome_level, wpc, [])
 
             for item in items:
                 spawned_items.append(item)
