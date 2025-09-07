@@ -33,8 +33,8 @@ WEAPON_MAPPING: Dict[str, Tuple[LiteralString, Tuple[ZippyType, ...] | None]] = 
 }
 
 ITEM_MAPPING: Dict[str, Tuple[LiteralString, Tuple[ZippyType, ...] | None]] = {
-    'Shield': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Items_Shields', (ZippyType.Shield, ZippyType.Eridian)),
-    'Grenade Mod': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_GrenadeMods_All', (ZippyType.GrenadeMod, ZippyType.EWOGrenadeMod)),
+    'Shield': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_Shields_All', (ZippyType.Shield, ZippyType.Eridian)),
+    'Grenade Mod': ('UltimateLoot_Pools_TEST.ChestPools.WhiteChest.WhiteChest_GrenadeMods_All', (ZippyType.GrenadeMod, ZippyType.EWOGrenadeMod)),
     # 'Class Mod': ('UltimateLoot_Pools_TEST.ChestPools.RedChest.RedChest_Items_Classmods', (ZippyType.ClassMod,)),
 }
 
@@ -85,8 +85,8 @@ def _get_item_from_loot_pool(pool: UObject, game_stage: int, expected_zippy: Tup
         #   Can see a range of values with:
         #   Haskell Snippet: `map (\x -> (x, 5.0 + 65.0 * (x ** 2.8))) [0, 0.1 .. 1.0]`
         from random import random
-        awesome_level = int(round(5.0 + (65 * (random() ** 2.8)), 2))
-        _, items = cdo.SpawnBalancedInventoryFromPool(pool, game_stage, awesome_level, get_pc(), [])
+        awesome_level = int(round(8.0 + (65 * (random() ** 2.8)), 2))
+        _, items = cdo.SpawnBalancedInventoryFromPool(pool, game_stage, awesome_level, get_pc(), [], 0.0)
 
         for item in items:
             item_zippy = create_zippy(str(item.ZippyFrame).strip().lower(), use_name=False)
@@ -163,7 +163,7 @@ class WeaponSpinner(SpinnerOption):
             return None
 
         # Since level restrictions apply we may not get any item depending on mod configuration
-        gamestage: int = 1
+        gamestage: int = 3
         item: UObject | None = _get_item_from_loot_pool(loot_pool, gamestage, zippy)
 
         # Failed to find any suitable items
@@ -229,6 +229,8 @@ class CharacterStarterEquipment(NestedOption):
         resource_data: WrappedArray[WrappedStruct] = obj.ResourceData
         resource_data.clear()
 
+        # This really only needs to be for the items they have but it's easier to give a flat amount
+        # to everything
         for resource_path, pool_path, amount, level in RESOURCE_POOLS:
             resource_data.append(make_struct(
                 'ResourceProfileData',
@@ -271,12 +273,9 @@ def create_starter_equipment_options() -> NestedOption:
                             ' the defaults with what is specified here. This change only takes effect'
                             ' for new characters created using the character selection screen'
                             ' (the movie where you select one of the four Vault Hunters).\n\n'
-                            'Note that the items here are subject to normal loot spawning rules, and'
-                            ' if no suitable item can be found, you may not receive any items or weapons.'
-                            ' Since the items follow the normal loot spawning process,'
-                            ' which VHC modifies extensively, it is also subject to those changes'
-                            ' - for example, Randomiser and VHC Expanded which removes certain item'
-                            ' restrictions such as level and part combinations.',
+                            'Items spawned here are subject to the games restrictions, loot pool'
+                            ' spawning process and any overrides caused by configuration of this mod'
+                            ' i.e., Randomiser and VHC Expanded.',
                 ).show()
             )),
             *(
@@ -293,5 +292,11 @@ def hook_on_character_selection(*_) -> None:
         return
 
     logging.info('Refreshing starter equipment!')
+
+    # Force a sync of the options, mainly used to ensure the VHC_Enabler options are False otherwise
+    #  first-load/spawn will have VHC items (even if you have VHC disabled :).
+    from ultimate_loot_mod.utils import sync_proxies_with_options
+    sync_proxies_with_options()
+
     for starter_equipment in all_character_starter_equipment:
         starter_equipment.apply_to_game()

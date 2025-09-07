@@ -38,6 +38,12 @@ def sync_options_with_proxies() -> None:
 
 
 def sync_proxies_with_options() -> None:
+
+    # Always force these into False as they are achievable with existing functionality
+    from ultimate_loot_mod.mapping.object_proxy import TagProxy, Tag
+    TagProxy(Tag.VHC_Enabler).set_value(False)
+    TagProxy(Tag.VHC_Expanded_Enabler).set_value(False)
+
     for opt in walk_options(the_mod().options):
         if isinstance(opt, SupportsValueSync):
             opt.sync_proxy()
