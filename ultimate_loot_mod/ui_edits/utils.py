@@ -18,6 +18,7 @@ last_drawn_menu: WillowGFxMenu | None = None
 last_drawn_populator: Populator | None = None
 last_base_path: str | None = None
 
+
 def _check_last_drawn_menu() -> None:
     if last_drawn_menu is None:
         raise RuntimeError("Last drawn menu is None")
@@ -46,8 +47,8 @@ def get_focused_item_base_path() -> str:
 
     return last_base_path
 
-def get_menu_tag(opt: BaseOption | int) -> str:
 
+def get_menu_tag(opt: BaseOption | int) -> str:
     base_path = get_focused_item_base_path()
 
     # Just return base_path.item{index} here
