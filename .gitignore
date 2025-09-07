@@ -1,6 +1,7 @@
 vendor/*.zip
 vendor/*.rar
 .idea
+.vscode
 
 **/*.pyc
 **/__pycache__
