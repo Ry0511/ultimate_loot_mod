@@ -6,19 +6,17 @@ from unrealsdk import logging
 from unrealsdk.unreal import UObject, WrappedStruct
 from mods_base.options import BaseOption, NestedOption
 from mods_base import hook
-
-import willow1_mod_menu as wmm
 from willow1_mod_menu.populators import Populator
-from willow1_mod_menu.populators.mod_options import ModOptionPopulator
 from willow1_mod_menu.util import WillowGFxMenu, find_focused_item, ASType
 
+import willow1_mod_menu as wmm
 import ultimate_loot_mod.ui_edits.utils as utils
 
 ################################################################################
 # | GLOBALS |
 ################################################################################
 
-_original_handle_activate = ModOptionPopulator.handle_activate
+_original_opt_pop_handle_activate = wmm.options.OptionPopulator.handle_activate
 _original_draw_custom_menu = wmm.options.draw_custom_menu
 
 
@@ -52,6 +50,7 @@ def get_current_selection(menu: WillowGFxMenu) -> Tuple[str, int, float] | None:
 
     # Never seen this happen but just in case; we could fallback to centerIt on the item
     if not math.isfinite(ypos):
+        logging.dev_warning(f"Y Position is not finite")
         return None
 
     return item, int(index_str), ypos
@@ -66,6 +65,8 @@ def restore_selection(populator: Populator) -> None:
     menu = utils.last_drawn_menu
     original_tick_rate = menu.TickRateSeconds
     menu.TickRateSeconds = 1.0 / 60.0
+
+    logging.misc(f"Restoring menu selection: ( '{item}', {index}, {ypos} )")
 
     # If it doesnt work after this many attempts then somethings gone wrong
     ticks_remaining = 10
@@ -112,8 +113,8 @@ def restore_selection(populator: Populator) -> None:
 # | WRAPPERS |
 ################################################################################
 
-@wraps(ModOptionPopulator.handle_activate)
-def _handle_activate(self, menu: WillowGFxMenu, option: BaseOption) -> None:
+@wraps(wmm.options.OptionPopulator.handle_activate)
+def _handle_activate_opt_populator(self, menu: WillowGFxMenu, option: BaseOption) -> None:
     if (
         isinstance(option, NestedOption)
         and utils.last_drawn_populator is not None
@@ -121,7 +122,7 @@ def _handle_activate(self, menu: WillowGFxMenu, option: BaseOption) -> None:
     ):
         setattr(utils.last_drawn_populator, "_selection_info", selection)
 
-    _original_handle_activate(self, menu, option)
+    _original_opt_pop_handle_activate(self, menu, option)
 
 
 @wraps(wmm.options.draw_custom_menu)
@@ -137,5 +138,5 @@ def _draw_custom_menu(menu: WillowGFxMenu) -> None:
 # | APPLY WRAPPERS |
 ################################################################################
 
-wmm.populators.mod_options.ModOptionPopulator.handle_activate = _handle_activate
 wmm.options.draw_custom_menu = _draw_custom_menu
+wmm.options.OptionPopulator.handle_activate = _handle_activate_opt_populator

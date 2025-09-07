@@ -266,21 +266,3 @@ def hook_on_character_selection(*_) -> None:
     logging.info('Refreshing starter equipment!')
     for starter_equipment in all_character_starter_equipment:
         starter_equipment.apply_to_game()
-
-
-@hook('Engine.Console:InputKey', immediately_enable=True)
-def hook_on_console_input(_0, args, *_) -> None:
-    from mods_base import EInputEvent, get_pc
-
-    key = args.Key
-    event = args.Event
-
-    if event != EInputEvent.IE_Released:
-        return
-
-    if (
-        (wpc := get_pc()) is not None
-        and key in ('LeftMouseButton', 'Enter', 'Space', 'Escape')
-        and wpc.GFxUIManager.GetPlayingMovie() is None
-    ):
-        wpc.ConsoleCommand('StopMovie')
