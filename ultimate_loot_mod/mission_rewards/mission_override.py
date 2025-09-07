@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Sequence, List, Set
 from enum import Enum
 from pathlib import Path
+from importlib import resources
 
 from unrealsdk import logging, find_class
 from unrealsdk.unreal import UObject
@@ -10,7 +11,6 @@ from ultimate_loot_mod.utils import dynamic_load_object
 __all__ = [
     "INV_BAL_DEF",
     "ITEM_POOL_DEF",
-    "DEFAULT_REWARD_FILE",
     "spawned_items",
     "MissionRewardOverride",
     "ZippyType",
@@ -22,7 +22,6 @@ __all__ = [
 
 INV_BAL_DEF: str = 'InventoryBalanceDefinition'
 ITEM_POOL_DEF: str = 'ItemPoolDefinition'
-DEFAULT_REWARD_FILE: Path = Path(__file__).parent / 'custom_rewards.txt'
 
 # List of all items we have spawned which will not get garbage collected
 spawned_items: List[UObject] = list()
@@ -67,15 +66,11 @@ def create_zippy(zippy_str: str, use_name=True) -> ZippyType | None:
     return None
 
 
-def load_mission_reward_overrides(file: Path = DEFAULT_REWARD_FILE) -> List["MissionRewardOverride"] | None:
-    if not file.is_file():
-        logging.error(f'File not found "{file}"')
-        return None
-
-    logging.info(f'Loading mission reward override file: "{file.resolve().name}"')
+def load_mission_reward_overrides(file: Path | None = None) -> List["MissionRewardOverride"] | None:
     res: List["MissionRewardOverride"] = list()
 
-    with open(file.resolve()) as handle:
+    def _read_stream(handle) -> None:
+        nonlocal res
         line_number = 0
 
         for line in handle:
@@ -90,6 +85,22 @@ def load_mission_reward_overrides(file: Path = DEFAULT_REWARD_FILE) -> List["Mis
                 res.append(MissionRewardOverride.create([s.strip() for s in trimmed_line.split(',')]))
             except ValueError as ex:
                 logging.error(f'Failed to parse line {line_number} with error {ex}')
+
+    # Open and read the default file ( even if said default file is inside a .sdkmod )
+    if file is None:
+        pth = resources.files('ultimate_loot_mod.mission_rewards') / 'custom_rewards.txt'
+        with pth.open(encoding='utf-8') as handle:
+            _read_stream(handle)
+    else:
+
+        if not file.is_file():
+            logging.error(f'File not found "{file}"')
+            return None
+
+        logging.info(f'Loading mission reward override file: "{file.resolve().name}"')
+
+        with open(file.resolve()) as handle:
+            _read_stream(handle)
 
     return res
 
