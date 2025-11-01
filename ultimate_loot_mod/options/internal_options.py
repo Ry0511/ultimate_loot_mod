@@ -174,12 +174,8 @@ class RaritySlider(SliderOption):
             self.tag.set_value(val)
 
     def create_format_label(self) -> str:
-        if self.is_integer:
-            value_text = f"{self.value:d}{self.value_suffix}"
-        else:
-            value_text = f"{self.value:.2f}{self.value_suffix}"
-
-        return f'{self.identifier}: {value_text}'
+        value_text = f"{self.value:d}" if self.is_integer else f"{self.value:.2f}"
+        return f'{self.identifier}: {value_text}{self.value_suffix}'
 
     def sync_with_proxy(self) -> None:
         val = self.tag.value()
