@@ -102,4 +102,4 @@ gd_itemgrades.weapons.itemgrade_weapon_combatshotgun, UltimateLoot_Pools_TEST.Ch
 gd_itemgrades.weapons.itemgrade_weapon_repeaterpistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols_All, True, False, Repeater, Eridian
 gd_itemgrades.weapons.itemgrade_weapon_revolverpistol, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Pistols_All, True, False, Revolver, Eridian
 gd_itemgrades.weapons.itemgrade_weapon_launcher_rocket, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Weapons_Launchers, True, False, Launcher, Eridian
-gd_itemgrades.gear.itemgrade_gear_shield, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Items_Shields_All, True, False, Shield, EWOShield
+gd_itemgrades.gear.itemgrade_gear_shield, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Shields_All, True, False, Shield, EWOShield
