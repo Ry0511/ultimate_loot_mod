@@ -44,7 +44,7 @@
 #
 
 # Base game mission rewards
-gd_customitems.Items.CustomItem_reward_shield, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Items_Shields_All, True, False, Shield, EWOShield
+gd_customitems.Items.CustomItem_reward_shield, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Shields_All, True, False, Shield, EWOShield
 gd_itemgrades.Gear.ItemGrade_Gear_GrenadeMODs, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_GrenadeMods_All, True, False, GrenadeMod, EWOGrenadeMod, Artifact
 gd_customitems.Items.CustomItem_StarterGear_ComDeck_Roland, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Roland, True, False, ClassMod
 gd_customitems.Items.CustomItem_StarterGear_ComDeck_Mordecai, UltimateLoot_Pools_TEST.ChestPools.CrimsonChest.CrimsonChest_Classmods_Mordecai, True, False, ClassMod
