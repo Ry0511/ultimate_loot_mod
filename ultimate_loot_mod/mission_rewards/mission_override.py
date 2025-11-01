@@ -236,9 +236,9 @@ class MissionRewardOverride:
             return None
 
         if not self.is_loot_pool_reward:
-            return dynamic_load_object(INV_BAL_DEF, self.reward_path)
+            return dynamic_load_object(INV_BAL_DEF, self.reward_path, no_throw=True)
         else:
-            return dynamic_load_object(ITEM_POOL_DEF, self.reward_path)
+            return dynamic_load_object(ITEM_POOL_DEF, self.reward_path, no_throw=True)
 
     def get_reward(self, wpc: UObject) -> InventoryBalanceDefinition | None:
 
