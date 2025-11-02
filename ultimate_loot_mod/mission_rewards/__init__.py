@@ -21,7 +21,7 @@ def hook_init_on_first_load(*_) -> None:
 
     for reward in _reward_overrides.values():
         if reward.reward_uobject() is None:
-            logging.info(f'Failed to load reward "{reward.reward_path}"')
+            logging.error(f'Failed to load reward "{reward.reward_path}"')
 
 
 hook_init_on_first_load.enable()
