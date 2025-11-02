@@ -38,7 +38,6 @@ build_mod(
     hooks=[hook_sync_options_state],
     on_enable=_on_enable,
     on_disable=_on_disable,
-    auto_enable=components.has_ulm,
 )
 
 auto_tag_all_options(the_mod(), the_mod().options)
