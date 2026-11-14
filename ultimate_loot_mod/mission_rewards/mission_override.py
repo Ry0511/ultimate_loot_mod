@@ -13,7 +13,6 @@ from ultimate_loot_mod.utils import dynamic_load_object
 __all__ = [
     "INV_BAL_DEF",
     "ITEM_POOL_DEF",
-    "spawned_items",
     "MissionRewardOverride",
     "ZippyType",
     "MissionDefinition",
@@ -24,9 +23,6 @@ __all__ = [
 
 INV_BAL_DEF: str = "InventoryBalanceDefinition"
 ITEM_POOL_DEF: str = "ItemPoolDefinition"
-
-# List of all items we have spawned which will not get garbage collected
-spawned_items: list[UObject] = list()
 
 
 # This doesn't need to be an enum as it also makes things harder if there are custom zippy types
@@ -257,9 +253,6 @@ class MissionRewardOverride:
     def _get_item_from_loot_pool(
         self, pool: ItemPoolDefinition, wpc: UObject
     ) -> InventoryBalanceDefinition | None:
-
-        global spawned_items
-
         cdo: UObject = find_class("WillowGame.ItemPool").ClassDefaultObject
 
         # Bit of an odd choice but if we are given a loot pool that can spawn multiple item
@@ -271,17 +264,20 @@ class MissionRewardOverride:
 
         for _ in range(20):
             _, items = cdo.SpawnBalancedInventoryFromPool(pool, gamestage, awesome_level, wpc, [])
+            balance: InventoryBalanceDefinition | None = None
 
             for item in items:
-                spawned_items.append(item)
                 item_zippy = create_zippy(str(item.ZippyFrame).strip().lower(), use_name=False)
 
                 if item_zippy is None:
                     logging.error(f'Unknown item zippy: "{item.ZippyFrame}"')
-                    continue
+                elif balance is None and self.compare_zippy(item_zippy):
+                    balance = item.DefinitionData.BalanceDefinition
 
-                if self.compare_zippy(item_zippy):
-                    return item.DefinitionData.BalanceDefinition
+                _ = item.Destroy()
+
+            if balance is not None:
+                return balance
 
         logging.error(f"Failed to find '{self.zippy}' item in pool '{self.reward_path}'")
         return None
