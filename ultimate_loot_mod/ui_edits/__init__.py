@@ -3,7 +3,6 @@ from functools import wraps
 
 import willow1_mod_menu as wmm
 from mods_base import BaseOption, GroupedOption, HiddenOption, Mod, NestedOption
-from mods_base.mod_list import base_mod
 from willow1_mod_menu.util import WillowGFxMenu
 
 from . import format_labels as format_labels
@@ -14,23 +13,18 @@ __all__ = [
     "auto_tag_all_options",
 ]
 
-# Only enable restore menu selection if the mod menu version is <1.2
-for mod in base_mod.components:
-    if mod.name == "Willow1 Mod Menu":
-        major, minor = map(int, mod.version.split("."))
-        if major < 1 or (major == 1 and minor < 2):
-            from . import restore_menu_selection as restore_menu_selection
-        else:
-            # Still need to grab and store the last drawn populator for other tweaks
-            _original_draw_custom_menu = wmm.options.draw_custom_menu
+# Grab and store the last drawn menu and populator so options can be refreshed in place
+_original_draw_custom_menu = wmm.options.draw_custom_menu
 
-            @wraps(wmm.options.draw_custom_menu)
-            def _draw_custom_menu(menu: WillowGFxMenu) -> None:
-                utils.last_drawn_menu = menu
-                utils.last_drawn_populator = wmm.options.populator_stack[-1]
-                _original_draw_custom_menu(menu)
 
-            wmm.options.draw_custom_menu = _draw_custom_menu
+@wraps(wmm.options.draw_custom_menu)
+def _draw_custom_menu(menu: WillowGFxMenu) -> None:
+    utils.last_drawn_menu = menu
+    utils.last_drawn_populator = wmm.options.populator_stack[-1]
+    _original_draw_custom_menu(menu)
+
+
+wmm.options.draw_custom_menu = _draw_custom_menu
 
 
 # NOTE: This has only been tested for ultimate_loot_mod so unused options/keybinds may not be

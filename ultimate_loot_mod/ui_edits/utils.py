@@ -1,11 +1,10 @@
 from mods_base import BaseOption
 from unrealsdk import logging
 from willow1_mod_menu.populators import Populator
-from willow1_mod_menu.util import ASType, WillowGFxMenu, find_focused_item
+from willow1_mod_menu.util import WillowGFxMenu, find_focused_item
 
 __all__ = [
     "WillowGFxMenu",
-    "ASType",
     "find_focused_item",
     "extract_item_base_path",
     "get_focused_item_base_path",

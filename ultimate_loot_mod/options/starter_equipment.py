@@ -151,7 +151,7 @@ def _get_item_from_loot_pool(
         #   Haskell Snippet: `map (\x -> (x, 5.0 + 65.0 * (x ** 2.8))) [0, 0.1 .. 1.0]`
         from random import random
 
-        awesome_level = int(round(8.0 + (65 * (random() ** 2.8)), 2))
+        awesome_level = int(8.0 + (65 * (random() ** 2.8)))
         _, items = cdo.SpawnBalancedInventoryFromPool(
             pool, game_stage, awesome_level, get_pc(), [], 0.0
         )

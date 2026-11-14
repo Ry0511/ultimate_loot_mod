@@ -103,7 +103,7 @@ def load_mission_reward_overrides(file: Path | None = None) -> list[MissionRewar
 
         logging.info(f'Loading mission reward override file: "{file.resolve().name}"')
 
-        with open(file.resolve()) as handle:
+        with open(file.resolve(), encoding="utf-8") as handle:
             _read_stream(handle)
 
     return res
@@ -278,7 +278,7 @@ class MissionRewardOverride:
 
                 if item_zippy is None:
                     logging.error(f'Unknown item zippy: "{item.ZippyFrame}"')
-                    return None
+                    continue
 
                 if self.compare_zippy(item_zippy):
                     return item.DefinitionData.BalanceDefinition

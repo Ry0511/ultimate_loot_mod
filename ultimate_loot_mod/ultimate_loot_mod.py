@@ -1,8 +1,6 @@
-from functools import cache
-from pathlib import Path
 from typing import ClassVar, final, override
 
-from mods_base import SETTINGS_DIR, Library
+from mods_base import MODS_DIR, Library
 
 __all__ = ["UltimateLootMod", "InstalledComponents", "the_mod"]
 
@@ -17,44 +15,14 @@ class InstalledComponents:
     has_ulm: bool = False
 
     def __init__(self) -> None:
-        self._check_for_arsenal_files()
-        self._check_for_ewo_files()
-        self._check_for_ulm_files()
-        self.find_borderlands_dir.cache_clear()
-
-    @cache
-    def find_borderlands_dir(self) -> Path | None:
-        borderlands_dir: Path | None = None
-
-        # This generally shouldn't fail
-        for parent in SETTINGS_DIR.parents:
-            if parent.name.lower() == "borderlands":
-                borderlands_dir = parent
-                break
-
-        return borderlands_dir
+        for path in (MODS_DIR.parent / "WillowGame" / "CookedPC").rglob("*"):
+            name = path.name.lower()
+            self.has_arsenal |= "the_dust_wastes_" in name
+            self.has_ewo |= "eridian_weapons_overhaul" in name
+            self.has_ulm |= "ultimateloot" in name
 
     def missing_components(self) -> bool:
         return not all((self.has_arsenal, self.has_ewo, self.has_ulm))
-
-    def _check_for_ulm_files(self) -> None:
-        if not (path := self.find_borderlands_dir()):
-            return
-        self.has_ulm = sum(1 for _ in path.rglob("*UltimateLoot*", case_sensitive=False)) > 0
-
-    def _check_for_arsenal_files(self) -> None:
-        if not (path := self.find_borderlands_dir()):
-            return
-        self.has_arsenal = (
-            sum(1 for _ in path.rglob("*The_Dust_Wastes_*", case_sensitive=False)) > 0
-        )
-
-    def _check_for_ewo_files(self) -> None:
-        if not (path := self.find_borderlands_dir()):
-            return
-        self.has_ewo = (
-            sum(1 for _ in path.rglob("*Eridian_Weapons_Overhaul*", case_sensitive=False)) > 0
-        )
 
 
 @final

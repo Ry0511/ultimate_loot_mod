@@ -162,14 +162,6 @@ class TagProxy:
                 logging.warning(f"Failed to load object {self.path()}")
         return LOADED_OBJECT_MAPPING[self.tag] is not None
 
-    def unload_object(self) -> None:
-        if not (obj := self.object()):
-            return
-
-        # Remove keep alive flag and clear mapping
-        obj.ObjectFlags &= ~ObjectFlags.KEEP_ALIVE
-        LOADED_OBJECT_MAPPING[self.tag] = None
-
     def force_int_to_float(self) -> None:
         if not self.try_load_object():
             return

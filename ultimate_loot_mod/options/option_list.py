@@ -87,6 +87,7 @@ def _button_reset_drop_rates(_: ButtonOption) -> None:
                 _ = proxy.set_value(proxy.default_value())
 
         sync_options_with_proxies()
+        refresh_last_drawn_options()
 
     box = OptionBox(
         title="Confirmation",

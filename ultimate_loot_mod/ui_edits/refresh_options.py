@@ -32,11 +32,10 @@ def refresh_slider(menu: WillowGFxMenu, opt: SliderOption) -> None:
 def refresh_spinner(menu: WillowGFxMenu, opt: SpinnerOption) -> None:
     item_path: str = get_menu_tag(opt)
 
-    item_index = opt.choices.index(opt.value)
-
-    if item_index == -1:
+    if opt.value not in opt.choices:
         raise ValueError(f"Choice {opt.value} does not exist in {opt.choices}")
 
+    item_index = opt.choices.index(opt.value)
     menu.SetVariableNumber(f"{item_path}.mChoice", float(item_index))
     menu.SetVariableString(f"{item_path}.mValue.text", opt.choices[item_index])
 
