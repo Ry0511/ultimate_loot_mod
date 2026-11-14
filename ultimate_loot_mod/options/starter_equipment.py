@@ -212,11 +212,11 @@ class WeaponSpinner(SpinnerOption):
 
     # noinspection PyArgumentList
     def __init__(
-        self, indentifier: str, quick_slot: EQuickWeaponSlot, value: str | None = None
+        self, identifier: str, quick_slot: EQuickWeaponSlot, value: str | None = None
     ) -> None:
         self.quick_slot = quick_slot
         super().__init__(
-            indentifier,
+            identifier,
             value="None" if value is None else value,
             choices=["None", *WEAPON_MAPPING.keys()],
         )

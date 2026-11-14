@@ -9,8 +9,6 @@ from .options.option_list import create_option_list
 from .ui_edits import auto_tag_all_options
 from .ultimate_loot_mod import InstalledComponents, UltimateLootMod, the_mod
 
-__version__: tuple[int, int]
-
 
 def _on_enable() -> None:
     _ = load_all_objects()
