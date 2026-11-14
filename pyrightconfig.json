@@ -1,0 +1,10 @@
+{
+  "pythonVersion": "3.14",
+  "pythonPlatform": "Windows",
+  "reportMissingTypeStubs": false,
+  "reportMissingModuleSource": false,
+  "reportImportCycles": false,
+  "reportAny": false,
+  "reportExplicitAny": false,
+  "reportImplicitRelativeImport": false
+}
