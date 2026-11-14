@@ -1,8 +1,10 @@
-from typing import runtime_checkable, Protocol, Iterable
+from collections.abc import Iterable
+from typing import Literal, Protocol, overload, runtime_checkable
 
-from unrealsdk.unreal import UObject, UClass
+from mods_base import BaseOption, GroupedOption, NestedOption
 from unrealsdk import find_class
-from mods_base import BaseOption, NestedOption, GroupedOption
+from unrealsdk.unreal import UClass, UObject
+
 from .ultimate_loot_mod import the_mod
 
 __all__ = [
@@ -38,28 +40,40 @@ def sync_options_with_proxies() -> None:
 
 
 def sync_proxies_with_options() -> None:
-
     # Always force these into False as they are achievable with existing functionality
-    from ultimate_loot_mod.mapping.object_proxy import TagProxy, Tag
-    TagProxy(Tag.VHC_Enabler).set_value(False)
-    TagProxy(Tag.VHC_Expanded_Enabler).set_value(False)
+    from ultimate_loot_mod.mapping.object_proxy import Tag, TagProxy
+
+    _ = TagProxy(Tag.VHC_Enabler).set_value(False)
+    _ = TagProxy(Tag.VHC_Expanded_Enabler).set_value(False)
 
     for opt in walk_options(the_mod().options):
         if isinstance(opt, SupportsValueSync):
             opt.sync_proxy()
 
 
+@overload
 def dynamic_load_object(
     in_obj_class: str | UClass,
     obj_name: str,
     may_fail: bool = True,
-    no_throw: bool = False
+    no_throw: Literal[False] = False,
+) -> UObject: ...
+
+
+@overload
+def dynamic_load_object(
+    in_obj_class: str | UClass, obj_name: str, may_fail: bool = True, *, no_throw: Literal[True]
+) -> UObject | None: ...
+
+
+def dynamic_load_object(
+    in_obj_class: str | UClass, obj_name: str, may_fail: bool = True, no_throw: bool = False
 ) -> UObject | None:
     global _core_obj_class
 
     # Could also just use the class we load later...
     if _core_obj_class is None:
-        _core_obj_class = find_class('Core.Object')
+        _core_obj_class = find_class("Core.Object")
 
     found_cls: UClass
 
@@ -70,7 +84,9 @@ def dynamic_load_object(
         found_cls = in_obj_class
 
     # Attempt to load the object
-    obj: UObject = _core_obj_class.ClassDefaultObject.DynamicLoadObject(obj_name, found_cls, may_fail)
+    obj: UObject | None = _core_obj_class.ClassDefaultObject.DynamicLoadObject(
+        obj_name, found_cls, may_fail
+    )
 
     # Assume this can only happen if may_fail is True?
     if obj is None and not no_throw:

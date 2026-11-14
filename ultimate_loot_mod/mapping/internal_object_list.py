@@ -1,14 +1,13 @@
 from enum import Enum, auto
+from typing import Any, override
 
-__all__ = [
-    "Tag"
-]
+__all__ = ["Tag"]
 
 
 class Tag(Enum):
-
     @staticmethod
-    def _generate_next_value_(_0, _1, count, _2):
+    @override
+    def _generate_next_value_(name: str, start: int, count: int, last_values: list[Any]) -> int:
         return count
 
     ################################################################################

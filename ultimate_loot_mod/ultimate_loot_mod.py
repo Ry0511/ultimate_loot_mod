@@ -1,13 +1,14 @@
 from functools import cache
 from pathlib import Path
+from typing import ClassVar, final, override
 
-from mods_base import Library, SETTINGS_DIR
+from mods_base import SETTINGS_DIR, Library
 
 __all__ = ["UltimateLootMod", "InstalledComponents", "the_mod"]
 
 
-def the_mod() -> "UltimateLootMod":
-    return UltimateLootMod._instance
+def the_mod() -> UltimateLootMod:
+    return UltimateLootMod.instance
 
 
 class InstalledComponents:
@@ -15,7 +16,7 @@ class InstalledComponents:
     has_ewo: bool = False
     has_ulm: bool = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._check_for_arsenal_files()
         self._check_for_ewo_files()
         self._check_for_ulm_files()
@@ -39,23 +40,29 @@ class InstalledComponents:
     def _check_for_ulm_files(self) -> None:
         if not (path := self.find_borderlands_dir()):
             return
-        self.has_ulm = sum(1 for _ in path.rglob('*UltimateLoot*', case_sensitive=False)) > 0
+        self.has_ulm = sum(1 for _ in path.rglob("*UltimateLoot*", case_sensitive=False)) > 0
 
     def _check_for_arsenal_files(self) -> None:
         if not (path := self.find_borderlands_dir()):
             return
-        self.has_arsenal = sum(1 for _ in path.rglob('*The_Dust_Wastes_*', case_sensitive=False)) > 0
+        self.has_arsenal = (
+            sum(1 for _ in path.rglob("*The_Dust_Wastes_*", case_sensitive=False)) > 0
+        )
 
     def _check_for_ewo_files(self) -> None:
         if not (path := self.find_borderlands_dir()):
             return
-        self.has_ewo = sum(1 for _ in path.rglob('*Eridian_Weapons_Overhaul*', case_sensitive=False)) > 0
+        self.has_ewo = (
+            sum(1 for _ in path.rglob("*Eridian_Weapons_Overhaul*", case_sensitive=False)) > 0
+        )
 
 
+@final
 class UltimateLootMod(Library):
-    _instance: "UltimateLootMod" = None
+    instance: ClassVar[UltimateLootMod]
 
-    def __init__(self, *args, **kwargs):
-        UltimateLootMod._instance = self
-        super().__init__(*args, **kwargs)
+    @override
+    def __post_init__(self) -> None:
+        UltimateLootMod.instance = self
+        super().__post_init__()
         self.is_enabled = True

@@ -1,11 +1,9 @@
 [project]
-authors = [{ "name" = "sleepmaster" }, { "name" = "Ry" }, ]
+authors = [{ "name" = "sleepmaster" }, { "name" = "Ry" }, { "name" = "ugyuu" }]
 description = "Configuration manager for sleepmaster's Ultimate Loot Mod"
 
 [tool.sdkmod]
 version = "1.1"
 name = "Ultimate Loot Mod"
-mod_type = "Standard"
-supported_games = "BL1"
-coop_support = "Unknown"
+supported_games = ["BL1"]
 license = { name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }

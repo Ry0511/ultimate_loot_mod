@@ -1,6 +1,5 @@
-from typing import Dict, List, Tuple
-
 from unrealsdk.unreal import UObject
+
 from .attribute_types import AttributeDataType
 from .internal_object_list import Tag
 
@@ -19,55 +18,77 @@ __all__ = [
 # | OBJECT PATH LIST |
 ################################################################################
 
-OBJECT_PATH_MAPPING: Dict[Tag, str] = {
-    Tag.Arsenal_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.Arsenal_Enabler',
-    Tag.BetterHealth_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.BetterHealth_Enabler',
-    Tag.EWO_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.EWO_Enabler',
-    Tag.PearlescentSDUs_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.PearlescentSDUs_Enabler',
-    Tag.VHC_Atlas_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Atlas_Enabler',
-    Tag.VHC_Atlas_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Atlas_Expanded_Enabler',
-    Tag.VHC_Dahl_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Dahl_Enabler',
-    Tag.VHC_Dahl_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Dahl_Expanded_Enabler',
-    Tag.VHC_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Enabler',
-    Tag.VHC_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Expanded_Enabler',
-    Tag.VHC_Gearbox_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Gearbox_Enabler',
-    Tag.VHC_Hyperion_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Hyperion_Enabler',
-    Tag.VHC_Hyperion_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Hyperion_Expanded_Enabler',
-    Tag.VHC_Jakobs_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Jakobs_Enabler',
-    Tag.VHC_Jakobs_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Jakobs_Expanded_Enabler',
-    Tag.VHC_Maliwan_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Maliwan_Enabler',
-    Tag.VHC_Maliwan_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Maliwan_Expanded_Enabler',
-    Tag.VHC_Randomizer_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Randomizer_Enabler',
-    Tag.VHC_SandS_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_SandS_Enabler',
-    Tag.VHC_SandS_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_SandS_Expanded_Enabler',
-    Tag.VHC_Tediore_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Tediore_Enabler',
-    Tag.VHC_Tediore_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Tediore_Expanded_Enabler',
-    Tag.VHC_Torgue_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Torgue_Enabler',
-    Tag.VHC_Torgue_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Torgue_Expanded_Enabler',
-    Tag.VHC_Vladof_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Vladof_Enabler',
-    Tag.VHC_Vladof_Expanded_Enabler: 'UltimateLoot_Attributes_TEST.Attributes._Enabler.VHC_Vladof_Expanded_Enabler',
-
-    Tag.DropChance_EWO: 'UltimateLoot_Attributes_TEST.Attributes.EWO.DropChance.DropChance_EWO',
-
-    Tag.DropChance_Legendary: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Legendary',
-    Tag.DropChance_Lootable: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Lootable',
-    Tag.DropChance_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_Pearlescent',
-    Tag.DropChance_Hybrid: 'UltimateLoot_Attributes_TEST.Attributes.VHC.DropChance.DropChance_Hybrid',
-    Tag.DropChance_EnemyEquipment: 'UltimateLoot_Attributes_TEST.Attributes.Shared.DropChance.DropChance_EnemyEquipment',
-
-    Tag.Multiplier_CrimsonChest_Legendary: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_CrimsonChest_Legendary',
-    Tag.Multiplier_CrimsonChest_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_CrimsonChest_Pearlescent',
-    Tag.Multiplier_RedChest_Legendary: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_RedChest_Legendary',
-    Tag.Multiplier_RedChest_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_RedChest_Pearlescent',
-    Tag.Multiplier_WhiteChest_Legendary: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_WhiteChest_Legendary',
-    Tag.Multiplier_WhiteChest_Pearlescent: 'UltimateLoot_Attributes_TEST.Attributes.Shared.Multiplier.Multiplier_WhiteChest_Pearlescent',
+OBJECT_PATH_MAPPING: dict[Tag, str] = {
+    tag: f"UltimateLoot_Attributes_TEST.Attributes.{group}.{tag.name}"
+    for group, tags in (
+        (
+            "_Enabler",
+            (
+                Tag.Arsenal_Enabler,
+                Tag.BetterHealth_Enabler,
+                Tag.EWO_Enabler,
+                Tag.PearlescentSDUs_Enabler,
+                Tag.VHC_Atlas_Enabler,
+                Tag.VHC_Atlas_Expanded_Enabler,
+                Tag.VHC_Dahl_Enabler,
+                Tag.VHC_Dahl_Expanded_Enabler,
+                Tag.VHC_Enabler,
+                Tag.VHC_Expanded_Enabler,
+                Tag.VHC_Gearbox_Enabler,
+                Tag.VHC_Hyperion_Enabler,
+                Tag.VHC_Hyperion_Expanded_Enabler,
+                Tag.VHC_Jakobs_Enabler,
+                Tag.VHC_Jakobs_Expanded_Enabler,
+                Tag.VHC_Maliwan_Enabler,
+                Tag.VHC_Maliwan_Expanded_Enabler,
+                Tag.VHC_Randomizer_Enabler,
+                Tag.VHC_SandS_Enabler,
+                Tag.VHC_SandS_Expanded_Enabler,
+                Tag.VHC_Tediore_Enabler,
+                Tag.VHC_Tediore_Expanded_Enabler,
+                Tag.VHC_Torgue_Enabler,
+                Tag.VHC_Torgue_Expanded_Enabler,
+                Tag.VHC_Vladof_Enabler,
+                Tag.VHC_Vladof_Expanded_Enabler,
+            ),
+        ),
+        (
+            "EWO.DropChance",
+            (Tag.DropChance_EWO,),
+        ),
+        (
+            "Shared.DropChance",
+            (
+                Tag.DropChance_Legendary,
+                Tag.DropChance_Lootable,
+                Tag.DropChance_Pearlescent,
+                Tag.DropChance_EnemyEquipment,
+            ),
+        ),
+        (
+            "VHC.DropChance",
+            (Tag.DropChance_Hybrid,),
+        ),
+        (
+            "Shared.Multiplier",
+            (
+                Tag.Multiplier_CrimsonChest_Legendary,
+                Tag.Multiplier_CrimsonChest_Pearlescent,
+                Tag.Multiplier_RedChest_Legendary,
+                Tag.Multiplier_RedChest_Pearlescent,
+                Tag.Multiplier_WhiteChest_Legendary,
+                Tag.Multiplier_WhiteChest_Pearlescent,
+            ),
+        ),
+    )
+    for tag in tags
 }
 
 ################################################################################
 # | VHC OBJECT LIST |
 ################################################################################
 
-VHC_CONFIG_LIST: List[Tuple[str, Tag, Tag | None]] = [
+VHC_CONFIG_LIST: list[tuple[str, Tag, Tag | None]] = [
     ("Gearbox", Tag.VHC_Gearbox_Enabler, None),
     ("Atlas", Tag.VHC_Atlas_Enabler, Tag.VHC_Atlas_Expanded_Enabler),
     ("SandS", Tag.VHC_SandS_Enabler, Tag.VHC_SandS_Expanded_Enabler),
@@ -84,7 +105,7 @@ VHC_CONFIG_LIST: List[Tuple[str, Tag, Tag | None]] = [
 # | DROP RATE OPTIONS |
 ################################################################################
 
-BASE_DROP_CHANCES: List[Tag] = [
+BASE_DROP_CHANCES: list[Tag] = [
     Tag.DropChance_EWO,
     Tag.DropChance_Legendary,
     Tag.DropChance_Lootable,
@@ -93,7 +114,7 @@ BASE_DROP_CHANCES: List[Tag] = [
     Tag.DropChance_EnemyEquipment,
 ]
 
-CHEST_MULTIPLIERS: List[Tag] = [
+CHEST_MULTIPLIERS: list[Tag] = [
     Tag.Multiplier_CrimsonChest_Legendary,
     Tag.Multiplier_CrimsonChest_Pearlescent,
     Tag.Multiplier_RedChest_Legendary,
@@ -109,7 +130,7 @@ CHEST_MULTIPLIERS: List[Tag] = [
 # NOTE
 #   These get overwritten by the actual values when initially loading the game objects
 
-DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
+DEFAULT_VALUE_MAPPING: dict[Tag, AttributeDataType] = {
     Tag.Arsenal_Enabler: True,
     Tag.BetterHealth_Enabler: True,
     Tag.EWO_Enabler: True,
@@ -150,6 +171,6 @@ DEFAULT_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {
     Tag.Multiplier_WhiteChest_Pearlescent: 5.0,
 }
 
-FIRST_LOAD_VALUE_MAPPING: Dict[Tag, AttributeDataType] = {}
+FIRST_LOAD_VALUE_MAPPING: dict[Tag, AttributeDataType] = {}
 
-LOADED_OBJECT_MAPPING: Dict[Tag, UObject | None] = {tag: None for tag in Tag}
+LOADED_OBJECT_MAPPING: dict[Tag, UObject | None] = {tag: None for tag in Tag}

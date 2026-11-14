@@ -1,14 +1,19 @@
 from dataclasses import dataclass
+from typing import override
 
+from mods_base import ObjectFlags
 from unrealsdk import logging
 from unrealsdk.unreal import UObject
 
-from mods_base import ObjectFlags  # noqa
-
-from .attribute_types import *
-from .internal_object_list import Tag
-from .internal_object_mappings import *
 from ..utils import dynamic_load_object
+from .attribute_types import ADT_Float, ADT_Int, AttributeDataType, to_py_type
+from .internal_object_list import Tag
+from .internal_object_mappings import (
+    DEFAULT_VALUE_MAPPING,
+    FIRST_LOAD_VALUE_MAPPING,
+    LOADED_OBJECT_MAPPING,
+    OBJECT_PATH_MAPPING,
+)
 
 __all__ = [
     "AttributeDataType",
@@ -29,14 +34,9 @@ _first_loaded_values_saved: bool = False
 ################################################################################
 
 
-def get_constant_value(obj: UObject, convert_to_py_type=True) -> AttributeDataType:
-    ty = obj.AttributeDataType
+def get_constant_value(obj: UObject) -> AttributeDataType:
     chain = obj.ValueResolverChain
-
-    if convert_to_py_type:
-        return to_py_type(ty, chain[len(chain) - 1].ConstantValue)
-    else:
-        return chain[len(chain) - 1].ConstantValue
+    return to_py_type(obj.AttributeDataType, chain[len(chain) - 1].ConstantValue)
 
 
 def set_constant_value(obj: UObject, value: AttributeDataType) -> bool:
@@ -63,7 +63,7 @@ def load_all_objects() -> bool:
     if not no_errors:
         logging.warning(
             "Failed to load some Ultimate Loot Mod objects;"
-            " Some configuration options may not apply!"
+            + " Some configuration options may not apply!"
         )
 
     return no_errors
@@ -86,16 +86,18 @@ def save_first_load_values() -> None:
 # | PROXY |
 ################################################################################
 
+
 @dataclass
 class TagProxy:
     tag: Tag
 
+    @override
     def __eq__(self, other: object) -> bool:
         return isinstance(other, TagProxy) and self.tag == other.tag
 
     @staticmethod
     def class_type() -> str:
-        return 'AttributeDefinition'
+        return "AttributeDefinition"
 
     def is_loaded(self) -> bool:
         return LOADED_OBJECT_MAPPING[self.tag] is not None
@@ -103,38 +105,36 @@ class TagProxy:
     def path(self) -> str:
         return OBJECT_PATH_MAPPING[self.tag]
 
-    def default_value(self) -> AttributeDataType | None:
+    def default_value(self) -> AttributeDataType:
         return DEFAULT_VALUE_MAPPING[self.tag]
 
     def first_load_value(self) -> AttributeDataType | None:
-        if self.tag not in FIRST_LOAD_VALUE_MAPPING:
-            return None
-        return FIRST_LOAD_VALUE_MAPPING[self.tag]
+        return FIRST_LOAD_VALUE_MAPPING.get(self.tag)
 
     def object(self) -> UObject | None:
-        self.try_load_object()
+        _ = self.try_load_object()
         return LOADED_OBJECT_MAPPING[self.tag]
 
-    def value(self, allow_default=True, convert_to_py_type=True) -> AttributeDataType | None:
-        if not self.try_load_object():
-            return self.default_value() if allow_default else None
+    def value(self) -> AttributeDataType:
+        if (obj := self.object()) is None:
+            return self.default_value()
 
         try:
-            return get_constant_value(obj=self.object(), convert_to_py_type=convert_to_py_type)
+            return get_constant_value(obj)
         except Exception as ex:
             logging.error(f"Failed to get value for {self.path()}: {ex}")
-            return self.default_value() if allow_default else None
+            return self.default_value()
 
     def set_value(self, value: AttributeDataType) -> bool:
-
-        if not self.try_load_object():
+        if (obj := self.object()) is None:
             return False
 
         try:
-            return set_constant_value(self.object(), value)
+            return set_constant_value(obj, value)
         except Exception as ex:
             logging.error(f"Failed to set value for {self.path()}: {ex}")
             from traceback import format_exc
+
             logging.error(format_exc(4))
             return False
 
@@ -150,7 +150,7 @@ class TagProxy:
                 # Lazy load the object and keep it alive
                 obj = dynamic_load_object(self.class_type(), self.path())
                 LOADED_OBJECT_MAPPING[self.tag] = obj
-                obj.ObjectFlags |= ObjectFlags.KEEP_ALIVE  # noqa
+                obj.ObjectFlags |= ObjectFlags.KEEP_ALIVE
 
                 # Seems a few of the attributes use ADT_Int when they want fractional numbers.
                 # Since it is stored as a float anyway we might as well just enforce it globally
@@ -167,7 +167,7 @@ class TagProxy:
             return
 
         # Remove keep alive flag and clear mapping
-        obj.ObjectFlags &= (~ObjectFlags.KEEP_ALIVE)  # noqa
+        obj.ObjectFlags &= ~ObjectFlags.KEEP_ALIVE
         LOADED_OBJECT_MAPPING[self.tag] = None
 
     def force_int_to_float(self) -> None:
