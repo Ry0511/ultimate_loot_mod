@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
-from mods_base import hook
+from mods_base import get_pc, hook
 from unrealsdk import logging
 from unrealsdk.hooks import Block, Type, prevent_hooking_direct_calls
 from unrealsdk.unreal import BoundFunction, UObject
@@ -10,7 +10,7 @@ from unrealsdk.unreal import BoundFunction, UObject
 from .mission_override import MissionRewardOverride, load_mission_reward_overrides
 
 if TYPE_CHECKING:
-    from BL1.WillowGame import MissionDefinition
+    from BL1.WillowGame import MissionDefinition, WillowPlayerReplicationInfo
 
 _reward_overrides: dict[str, MissionRewardOverride] | None = None
 _granting_rewards: bool = False
@@ -46,6 +46,13 @@ def hook_grant_rewards_pre(*_: Any) -> None:
 def hook_grant_rewards_post(*_: Any) -> None:
     global _granting_rewards
     _granting_rewards = False
+
+
+@hook("WillowGame.MissionDefinition:GetGameStage", immediately_enable=True)
+def hook_reward_game_stage(*_: Any) -> tuple[type[Block], int] | None:
+    if not _granting_rewards:
+        return None
+    return Block, cast("WillowPlayerReplicationInfo", get_pc().PlayerReplicationInfo).ExpLevel
 
 
 @hook(  # pyright: ignore[reportArgumentType]
