@@ -1,8 +1,8 @@
 from mods_base import build_mod
 from unrealsdk import logging
 
+from . import jakobs_vendor_fix
 from . import mission_rewards as mission_rewards
-from . import ui_edits as ui_edits
 from .hooks import hook_sync_options_state
 from .mapping.object_proxy import load_all_objects, save_first_load_values
 from .options import starter_equipment as starter_equipment
@@ -24,7 +24,7 @@ _ = load_all_objects()
 _ = build_mod(
     cls=UltimateLootMod,
     options=create_option_list(),
-    hooks=[hook_sync_options_state],
+    hooks=[hook_sync_options_state, *jakobs_vendor_fix.hooks],
     on_enable=_on_enable,
 )
 

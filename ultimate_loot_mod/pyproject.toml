@@ -1,8 +1,13 @@
 [project]
-authors = [{ "name" = "sleepmaster" }, { "name" = "Ry" }, { "name" = "ugyuu" }]
+authors = [
+    { "name" = "sleepmaster" },
+    { "name" = "Ry" },
+    { "name" = "ugyuu" },
+    { "name" = "BioHazardAlbatross" },
+]
 description = "Configuration manager for sleepmaster's Ultimate Loot Mod; also contains Jakobs Vendor Fix"
 
 [tool.sdkmod]
-version = "1.1"
+version = "1.2"
 name = "Ultimate Loot Mod"
 license = { name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }

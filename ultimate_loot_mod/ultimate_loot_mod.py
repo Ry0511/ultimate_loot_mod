@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import ClassVar, final, override
 
 from mods_base import MODS_DIR, Library
@@ -27,7 +28,31 @@ class InstalledComponents:
 
 @final
 class UltimateLootMod(Library):
+    @dataclass
+    class ComponentInfo:
+        name: str
+        version: str
+        author: str = ""
+
     instance: ClassVar[UltimateLootMod]
+    components: ClassVar[list[ComponentInfo]] = []
+    _base_description: str = ""
+
+    @property
+    @override
+    def description(self) -> str:
+        if not self.components:
+            return self._base_description
+
+        entries = "".join(
+            f"<li>{c.name}: {c.version}{f' by {c.author}' if c.author else ''}</li>"
+            for c in sorted(self.components, key=lambda c: c.name.lower())
+        )
+        return f"{self._base_description}<br><br>Components:<ul>{entries}</ul>"
+
+    @description.setter
+    def description(self, value: str) -> None:  # pyright: ignore[reportIncompatibleVariableOverride]
+        self._base_description = value
 
     @override
     def __post_init__(self) -> None:
