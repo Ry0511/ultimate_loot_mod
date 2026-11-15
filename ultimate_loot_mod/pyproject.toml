@@ -1,4 +1,6 @@
 [project]
+name = "ultimate_loot_mod"
+version = "1.2"
 authors = [
     { "name" = "sleepmaster" },
     { "name" = "Ry" },
@@ -8,6 +10,6 @@ authors = [
 description = "Configuration manager for sleepmaster's Ultimate Loot Mod; also contains Jakobs Vendor Fix"
 
 [tool.sdkmod]
-version = "1.2"
 name = "Ultimate Loot Mod"
 license = { name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }
+download = "https://github.com/Ry0511/ultimate_loot_mod/releases/latest/download/ultimate_loot_mod.sdkmod"
